@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.loudsight.meta</groupId>
+        <artifactId>entity-meta-generator</artifactId>
+        <version>0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <js.artifact.name>entity-meta-generator-lib</js.artifact.name>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <revision>0-SNAPSHOT</revision>
+    </properties>
+
+    <artifactId>entity-meta-generator-lib</artifactId>
+    <packaging>jar</packaging>
+    <version>0-SNAPSHOT</version>
+
+    <name>entity-meta-generator-lib</name>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+</project>

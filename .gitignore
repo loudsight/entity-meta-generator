@@ -1,35 +1,22 @@
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### IntelliJ IDEA ###
-.idea/*
-*.iws
-*.iml
-*.ipr
-
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-
-### Mac OS ###
-.DS_Store
+/.idea
+/.vscode/
+/**/*.iml
+/**/target
+/**/build
+/h2db
+/venv
+/**/node_modules
+/**/dist
+/masters
+/.planning
+/.automationj
+/.ipynb_checkpoints
+/pom.xml
+/**/.settings
+/**/.project
+/**/.metadata
+/scratch
+/**/*.egg-info
+/_project31/
+/unpublished/webapp/backendserver/src/main/resources/static
+/examples/ubs-vwap-calculator
