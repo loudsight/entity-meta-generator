@@ -1,14 +1,12 @@
 package com.loudsight.meta.entity
 
-import kotlin.reflect.KClass
-
 class EntityParameter(
     val name: String,
-    val parameterType: KClass<*>,
+    val parameterType: Class<*>,
     val annotations: List<EntityAnnotation>
 ) {
     constructor(
         name: String,
-        parameterType: KClass<*>,
+        parameterType: Class<*>,
     ) : this(name, parameterType, listOf())
 }

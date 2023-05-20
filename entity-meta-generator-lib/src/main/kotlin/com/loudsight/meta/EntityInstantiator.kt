@@ -3,13 +3,14 @@ package com.loudsight.meta
 import com.loudsight.meta.entity.EntityConstructor
 import com.loudsight.meta.entity.EntityField
 import com.loudsight.meta.serialization.TypeConverters
+import com.loudsight.useful.helper.ClassHelper
 import kotlin.reflect.KClass
 
 object EntityInstantiator {
 
     private fun <T> getParameters(constructor: EntityConstructor,
-                              fieldsMap: Map<String, EntityField<T, *>>,
-                              entityMap: Map<String, Any>): Array<Any?> {
+                                  fieldsMap: Map<String, EntityField<T, *>>,
+                                  entityMap: Map<String, Any>): Array<Any?> {
         return constructor.entityParameters
             .map {
                 val fieldName = it.name
@@ -91,7 +92,7 @@ object EntityInstantiator {
                         val meta = MetaRepository.getMeta(field.typeClass)!!
                         meta.newInstance(mapOf(Pair("name", fieldValue)))
                     } else {
-                        TypeConverters.convert(fieldValue, field.typeClass as KClass<Any>)!!
+                        TypeConverters.convert(fieldValue, field.typeClass.kotlin )!!
                     }
                     field[entity] = convertedValue
                 }

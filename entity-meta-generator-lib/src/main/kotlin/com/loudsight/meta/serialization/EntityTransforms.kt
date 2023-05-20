@@ -14,6 +14,7 @@ object EntityTransforms {
         register(StringEntityTransform)
         register(EnumEntityTransform)
         register(LongEntityTransform)
+        register(DoubleEntityTransform)
         register(IntEntityTransform)
         register(ListEntityTransform)
         register(SetEntityTransform)
