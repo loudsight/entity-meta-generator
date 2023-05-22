@@ -8,17 +8,17 @@ import java.util.function.Function;
 
 public class EntityField<E, T> {
     @Transient
-    boolean isId;
+    private final boolean isId;
 
     @Transient
-    boolean isTransient;
+    private final boolean isTransient;
     @Id
     private final String name;
 
     private final Class<T> typeClass;
     private final boolean isEnum;
     private final boolean isCollection;
-    Collection<EntityAnnotation> annotations;
+    private final Collection<EntityAnnotation> annotations;
     @Transient
     private final Function<E, T> getter;
     @Transient
@@ -37,6 +37,7 @@ public class EntityField<E, T> {
         this.isCollection = isCollection;
         this.getter = getter;
         this.setter = setter;
+        this.annotations = annotations;
         this.isId = annotations.stream().anyMatch(it -> "com.loudsight.meta.annotation.Id".equals(it.getName()));
         this.isTransient = annotations.stream().anyMatch(it -> "com.loudsight.meta.annotation.Transient".equals(it.getName()));
     }
@@ -72,6 +73,18 @@ public class EntityField<E, T> {
 
     public boolean isCollection() {
         return isCollection;
+    }
+
+    public boolean isId() {
+        return isId;
+    }
+
+    public Collection<EntityAnnotation> getAnnotations() {
+        return annotations;
+    }
+
+    public boolean isTransient() {
+        return isTransient;
     }
 
     public interface Setter<E, T> {
