@@ -5,6 +5,7 @@ import com.loudsight.meta.entity.EntityConstructor;
 import com.loudsight.meta.entity.EntityField;
 import com.loudsight.meta.entity.EntityMethod;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ public interface Meta<T> {
 
     Class<T> getTypeClass();
 
-    List<EntityField<T, ?>> getFields();
+    Collection<EntityField<T, ?>> getFields();
 
     List<EntityConstructor> getConstructors();
 

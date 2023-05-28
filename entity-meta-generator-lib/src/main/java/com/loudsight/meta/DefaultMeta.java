@@ -13,13 +13,10 @@ public abstract class DefaultMeta<T> implements Meta<T> {
     private final String typeName;
     private final String simpleTypeName;
     private final Class<T> typeClass;
-    private final List<EntityField<T, ?>> fields;
     private final List<EntityConstructor> constructors;
     private final List<EntityAnnotation> annotations;
     private final List<Class<?>> typeHierarchy;
     private final List<EntityMethod<T, ?>> methods;
-
-//    private final List<EntityField<T, ?>> sortedEntityFields;
 
     private final Map<String, EntityField<T, ?>> fieldMap;
 
@@ -37,23 +34,15 @@ public abstract class DefaultMeta<T> implements Meta<T> {
         this.typeName = typeName;
         this.simpleTypeName = simpleTypeName;
         this.typeClass = typeClass;
-        this.fields = fields;
         this.constructors = constructors;
         this.annotations = annotations;
         this.typeHierarchy = typeHierarchy;
         this.methods = methods;
 
-//        this.sortedEntityFields = new ArrayList<>(fields)
-//                .stream()
-//                .sorted(Comparator.comparing(EntityField::getName))
-//                .toList();
+        var fieldMap = new TreeMap<String, EntityField<T, ?>>(String::compareTo);
+        fields.forEach(it -> fieldMap.put(it.getName(), it));
 
-        this.fieldMap = fields
-                .stream()
-                .collect(Collectors
-                .toMap(EntityField::getName, it ->it)
-                );
-
+        this.fieldMap = Collections.unmodifiableMap(fieldMap);
     }
 
     //    private val methodMap: Map<String, EntityMethod<T, *>>
@@ -80,8 +69,8 @@ public abstract class DefaultMeta<T> implements Meta<T> {
     }
 
     @Override
-    public List<EntityField<T, ?>> getFields() {
-        return fields;
+    public Collection<EntityField<T, ?>> getFields() {
+        return fieldMap.values();
     }
 
     @Override
@@ -115,13 +104,14 @@ public abstract class DefaultMeta<T> implements Meta<T> {
 //
 @Override
     public Map<String, Object> toMap(T entity) {
-        return fields
+        return fieldMap
+                .entrySet()
                 .stream()
-                .filter(it -> Objects.nonNull(it.get(entity)))
+                .filter(it -> Objects.nonNull(it.getValue().get(entity)))
             .collect(
                     Collectors.toMap(
-                            EntityField::getName,
-                            it -> it.get(entity)
+                            Map.Entry::getKey,
+                            it -> it.getValue().get(entity)
                     )
             );
     }

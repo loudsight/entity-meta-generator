@@ -27,9 +27,9 @@ object EntityInstantiator {
 
                 val convertedValue = if (field.isEnum && fieldValue is String) {
                     val meta = MetaRepository.getMeta(field.typeClass)!!
-                    meta.newInstance(mapOf(Pair("name", fieldValue)))
+                    meta.newInstance(mapOf(kotlin.Pair("name", fieldValue)))
                 } else {
-                    TypeConverters.convert(fieldValue!!, field.typeClass as KClass<Any>)!!
+                    TypeConverters.convert(fieldValue, field.typeClass.kotlin as KClass<Any>)!!
                 }
 //
                 return@map convertedValue
@@ -66,10 +66,10 @@ object EntityInstantiator {
                 paramsMap.size
             }
 
-        var c = constructors
+        val c = constructors
             .asSequence()
             .filter { it.entityParameters.isNotEmpty() && paramsMap.keys.containsAll(it.entityParameters.map { k -> k.name }.toList()) }
-//            .filter { it.entityParameters.size >= size }
+            .filter { it.entityParameters.size >= size }
             .sortedByDescending { it.entityParameters.size }
             .toList()
 
@@ -90,7 +90,7 @@ object EntityInstantiator {
                     val field = fieldsMap[fieldName]!!
                     val convertedValue = if (field.isEnum && fieldValue is String) {
                         val meta = MetaRepository.getMeta(field.typeClass)!!
-                        meta.newInstance(mapOf(Pair("name", fieldValue)))
+                        meta.newInstance(mapOf(kotlin.Pair("name", fieldValue)))
                     } else {
                         TypeConverters.convert(fieldValue, field.typeClass.kotlin )!!
                     }

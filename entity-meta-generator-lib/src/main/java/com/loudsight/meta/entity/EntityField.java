@@ -24,7 +24,7 @@ public class EntityField<E, T> {
     @Transient
     private final Setter<E, T> setter;
 
-    EntityField(String name,
+    public EntityField(String name,
             Class<T> typeClass,
             boolean isEnum,
             boolean isCollection,

@@ -9,9 +9,7 @@
     </parent>
 
     <properties>
-        <js.artifact.name>entity-meta-generator-lib</js.artifact.name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <revision>0-SNAPSHOT</revision>
     </properties>
 
     <artifactId>entity-meta-generator-lib</artifactId>

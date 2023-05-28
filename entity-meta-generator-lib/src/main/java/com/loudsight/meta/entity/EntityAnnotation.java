@@ -7,22 +7,30 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EntityAnnotation {
-    class AnnotationValue {
-        @Id
-        String name;
+    public Map<String, AnnotationValue> getProperties() {
+        return properties;
+    }
 
-        Object value;
+    public static class AnnotationValue {
+        @Id
+        private final String name;
+
+        private final Object value;
 
         AnnotationValue(String name, Object value) {
             this.name = name;
             this.value = value;
+        }
+
+        public Object getValue() {
+            return value;
         }
     }
 
 
     @Id
     private final String name;
-    Map<String, AnnotationValue> properties;
+    private final Map<String, AnnotationValue> properties;
 
     public EntityAnnotation(String name, AnnotationValue... annotationValues) {
         this.name = name;

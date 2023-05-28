@@ -3,9 +3,7 @@ package com.loudsight.meta.serialization.transform
 import com.loudsight.meta.Meta
 import com.loudsight.meta.MetaRepository
 import com.loudsight.meta.serialization.EntityTransform
-import com.loudsight.meta.serialization.EntityTransforms
 import com.loudsight.meta.serialization.EntityType
-import kotlin.reflect.KClass
 
 object CustomEntityTransform : EntityTransform<Any>(EntityType.CUSTOM, Any::class) {
 
@@ -22,6 +20,14 @@ object CustomEntityTransform : EntityTransform<Any>(EntityType.CUSTOM, Any::clas
         writeStr(meta.typeName, bytes)
 
         val fieldBytes = mutableListOf<Byte>()
+
+//        val subtypeFields = meta.typeHierarchy
+//            .map { MetaRepository.getMeta(it) as Meta<T> }
+//            .flatMap { it.fields }
+//
+//        val fields = Stream.concat(subtypeFields.stream(), meta.fields.stream())
+//            .collect(Collectors.toList())
+
 
         val fieldCount = meta.fields
             .filter { it[entity] != null }
