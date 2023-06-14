@@ -48,17 +48,17 @@ abstract class EntityTransform<T : Any>(val entityType: EntityType, val kClass: 
         return length
     }
 
-    protected fun readStr(bytes: Iterator<Byte>): String {
-        val length = StringEntityTransform.readInt(bytes)
-        val outBytes = mutableListOf<Byte>()
-        for (i in 0 until length) {
-            outBytes.add(bytes.next())
-        }
-
-        return outBytes.toByteArray().decodeToString()
-    }
 
     companion object {
+        fun readStr(bytes: Iterator<Byte>): String {
+            val length = StringEntityTransform.readInt(bytes)
+            val outBytes = mutableListOf<Byte>()
+            for (i in 0 until length) {
+                outBytes.add(bytes.next())
+            }
+
+            return outBytes.toByteArray().decodeToString()
+        }
         fun <T : Any> serialize(entity: T?): ByteArray {
             val outBytes = mutableListOf<Byte>()
             serialize(entity, outBytes)

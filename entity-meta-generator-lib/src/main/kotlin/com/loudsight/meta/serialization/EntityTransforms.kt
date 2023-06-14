@@ -9,6 +9,7 @@ object EntityTransforms {
     private val entityTypeToEntityTransform: MutableMap<EntityType, EntityTransform<*>> = LinkedHashMap()
 
     init {
+        register(ClassTypeTransform)
         register(BooleanEntityTransform)
         register(ByteEntityTransform)
         register(StringEntityTransform)
