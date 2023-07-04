@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public abstract class DefaultMeta<T> implements Meta<T> {
 
     private final String typeName;
+    private final String packageName;
     private final String simpleTypeName;
     private final Class<T> typeClass;
     private final List<EntityConstructor> constructors;
@@ -22,7 +23,7 @@ public abstract class DefaultMeta<T> implements Meta<T> {
 
 
     public DefaultMeta(
-            String typeName,
+            String packageName,
             String simpleTypeName,
             Class<T> typeClass,
             List<EntityField<T, ?>> fields,
@@ -31,7 +32,8 @@ public abstract class DefaultMeta<T> implements Meta<T> {
             List<Class<?>> typeHierarchy,
             List<EntityMethod<T, ?>> methods
     ) {
-        this.typeName = typeName;
+        this.typeName = packageName + "."+ simpleTypeName;
+        this.packageName = packageName;
         this.simpleTypeName = simpleTypeName;
         this.typeClass = typeClass;
         this.constructors = constructors;
@@ -56,6 +58,11 @@ public abstract class DefaultMeta<T> implements Meta<T> {
     @Override
     public String getTypeName() {
         return typeName;
+    }
+
+    @Override
+    public String getPackageName() {
+        return packageName;
     }
 
     @Override

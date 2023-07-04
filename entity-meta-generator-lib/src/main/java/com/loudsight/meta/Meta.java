@@ -13,6 +13,8 @@ import java.util.Map;
 public interface Meta<T> {
     String getTypeName();
 
+    String getPackageName();
+
     String getSimpleTypeName();
 
     Class<T> getTypeClass();
