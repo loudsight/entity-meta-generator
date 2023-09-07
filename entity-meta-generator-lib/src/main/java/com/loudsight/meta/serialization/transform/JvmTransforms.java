@@ -4,6 +4,6 @@ import com.loudsight.meta.serialization.EntityTransforms;
 
 public class JvmTransforms {
     public static void init() {
-        EntityTransforms.INSTANCE.register(TemporalEntityTransform.INSTANCE);
+        EntityTransforms.getInstance().register(TemporalEntityTransform.getInstance());
     }
 }

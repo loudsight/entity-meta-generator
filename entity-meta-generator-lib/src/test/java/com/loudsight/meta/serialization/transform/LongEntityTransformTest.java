@@ -36,9 +36,9 @@ public class LongEntityTransformTest {
 
     private void testValue(long expected) {
         List<Byte> bytes = new ArrayList<>();
-        LongEntityTransform.INSTANCE.serializeEntity(expected, bytes);
+        LongEntityTransform.getInstance().serializeEntity(expected, bytes);
         bytes.remove(0);
-        long actual = LongEntityTransform.INSTANCE.deserializeEntity(bytes.iterator());
+        long actual = LongEntityTransform.getInstance().deserializeEntity(bytes.iterator());
 
         assertEquals(expected, actual);
     }

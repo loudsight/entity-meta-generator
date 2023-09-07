@@ -55,12 +55,12 @@ public class EntityHelper {
             Class<?> sourceClass = value.getClass();
 
             if (targetClass.isAssignableFrom(sourceClass)) {
-                return ClassHelper.Companion.uncheckedCast(result);
+                return ClassHelper.uncheckedCast(result);
             }
 
             if (Enum.class.isAssignableFrom(targetClass)) {
                     result = targetClass.getMethod("valueOf", String.class).invoke(null, value.toString());
-                    return ClassHelper.Companion.uncheckedCast(result);
+                    return ClassHelper.uncheckedCast(result);
             }
 
             Converter<Object, T> converter = (Converter<Object, T>) converters.get(sourceClass, targetClass);
@@ -83,6 +83,6 @@ public class EntityHelper {
         } catch (Exception e) {
             logger.error("Unexpected error", e);
         }
-        return ClassHelper.Companion.uncheckedCast(result);
+        return ClassHelper.uncheckedCast(result);
     }
 }

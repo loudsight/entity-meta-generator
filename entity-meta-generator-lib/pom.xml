@@ -19,12 +19,10 @@
     <name>entity-meta-generator-lib</name>
 
     <dependencies>
-
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test-junit</artifactId>
-            <scope>test</scope>
+            <groupId>com.loudsight</groupId>
+            <artifactId>kutils</artifactId>
+            <version>0-SNAPSHOT</version>
         </dependency>
-
     </dependencies>
 </project>
