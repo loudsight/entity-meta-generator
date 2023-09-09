@@ -1,6 +1,5 @@
 package com.loudsight.meta.entity;
 
-import org.jetbrains.annotations.Nullable;
 import javax.lang.model.element.TypeElement;
 import java.util.Collection;
 
@@ -27,12 +26,12 @@ public class EntityVariableInfo {
         this.isCollection = isCollection;
         this.annotations = annotations;
     }
-    public Boolean isNullable() {
-
-        return annotations.stream().anyMatch(it -> {
-            return it.getName().equals(Nullable.class.getName());
-        });
-    }
+//    public Boolean isNullable() {
+//
+//        return annotations.stream().anyMatch(it -> {
+//            return it.getName().equals(Nullable.class.getName());
+//        });
+//    }
 
     public String getName() {
         return name;

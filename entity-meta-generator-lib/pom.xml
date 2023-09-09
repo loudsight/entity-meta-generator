@@ -21,8 +21,8 @@
     <dependencies>
         <dependency>
             <groupId>com.loudsight</groupId>
-            <artifactId>kutils</artifactId>
-            <version>0-SNAPSHOT</version>
+            <artifactId>helper</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

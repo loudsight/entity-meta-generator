@@ -10,19 +10,19 @@ import java.util.List;
 public abstract class EntityTransform<T> {
 
     protected final EntityType entityType;
-    private final Class<T> targetClass;
+    private final List<Class<?>> targetClass;
 
-    public EntityTransform(EntityType entityType, Class<T> targetClass) {
+    public EntityTransform(EntityType entityType, Class<?>... targetClass) {
         this.entityType = entityType;
-        this.targetClass = targetClass;
+        this.targetClass = Arrays.asList(targetClass);
     }
 
-    public Class<T> getTargetClass() {
+    public List<Class<?>> getTargetClass() {
         return targetClass;
     }
 
     public boolean canTransform(Object entity) {
-        return targetClass.isAssignableFrom(entity.getClass());
+        return targetClass.stream().anyMatch(it -> it.isAssignableFrom(entity.getClass()));
     }
 
     abstract public void serializeEntity(T entity, List<Byte> bytes);

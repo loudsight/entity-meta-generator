@@ -34,7 +34,7 @@ public class EntityTransforms {
     }
 
     public void register(EntityTransform<?> entityTransform) {
-        classToEntityType.put(entityTransform.getTargetClass(), entityTransform);
+        entityTransform.getTargetClass().forEach(targetClass -> classToEntityType.put(targetClass, entityTransform));
         entityTypeToEntityTransform.put(entityTransform.entityType, entityTransform);
     }
     public <T> EntityTransform<T> getEntityTransform(EntityType entityType) {

@@ -1,4 +1,4 @@
-# Loudsight Entity Meta Generator
+# Simple Annotation
 
 ## Requirements
 - Java 8 or newer installed and configured (`JAVA_HOME` environment variable should be available globally)
@@ -17,10 +17,9 @@ Afterwards, you can add it as a dependency to  your Maven project.
     <dependencies>
         ...
         <dependency>
-            <groupId>com.loudsight.meta</groupId>
-            <artifactId>entity-meta-processor</artifactId>
-            <version>0-SNAPSHOT</version>
-            <scope>provided</scope>
+            <groupId>com.camacho</groupId>
+            <artifactId>simpleannotation</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 ```

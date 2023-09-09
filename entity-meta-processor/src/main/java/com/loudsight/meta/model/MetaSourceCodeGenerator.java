@@ -5,7 +5,6 @@ import com.loudsight.meta.EntityInstantiator;
 import com.loudsight.meta.MetaInfo;
 import com.loudsight.meta.entity.*;
 import com.squareup.javapoet.*;
-import org.jetbrains.annotations.NotNull;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
@@ -373,7 +372,6 @@ public class MetaSourceCodeGenerator {
 
     }
 
-    @NotNull
     private static String getType(EntityTypeInfo info) {
         String type = info.getTypeName();
         type = typeConversions.getOrDefault(type, type);
@@ -396,7 +394,6 @@ public class MetaSourceCodeGenerator {
         }).collect(Collectors.joining(", "));
     }
 
-    @NotNull
     private FieldSpec newEntityFieldSpec(EntityVariableInfo info) {
         TypeName genericType = entityVariableInfoToParameterizedTypeName(info.getType());
         ParameterizedTypeName fieldType = ParameterizedTypeName.get(

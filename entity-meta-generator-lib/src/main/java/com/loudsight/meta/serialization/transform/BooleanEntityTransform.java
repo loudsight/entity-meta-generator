@@ -16,7 +16,7 @@ private static class BooleanEntityTransformHolder {
         return BooleanEntityTransformHolder.INSTANCE;
     }
     private BooleanEntityTransform() {
-        super(EntityType.BOOLEAN, boolean.class);
+        super(EntityType.BOOLEAN, boolean.class, Boolean.class);
     }
 
     @Override
