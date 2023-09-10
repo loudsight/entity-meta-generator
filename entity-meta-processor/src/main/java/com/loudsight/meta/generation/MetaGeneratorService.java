@@ -3,7 +3,7 @@ package com.loudsight.meta.generation;
 import com.loudsight.meta.*;
 import com.loudsight.meta.annotation.Transient;
 import com.loudsight.meta.entity.*;
-import com.loudsight.useful.helper.ClassHelper;
+import com.loudsight.helper.ClassHelper;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;

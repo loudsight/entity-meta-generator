@@ -3,6 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <artifactId>parent</artifactId>
+        <groupId>com.loudsight</groupId>
+        <version>0.0.18</version>
+    </parent>
+
     <groupId>com.loudsight.meta</groupId>
     <artifactId>entity-meta-generator</artifactId>
     <version>0-SNAPSHOT</version>
@@ -35,7 +41,6 @@
     </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <revision>0-SNAPSHOT</revision>
         <release.arguments />
         <java.version>17</java.version>
         <loudsight.utilities.version>0-SNAPSHOT</loudsight.utilities.version>

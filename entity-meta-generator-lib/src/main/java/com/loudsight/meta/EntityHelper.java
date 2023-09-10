@@ -1,7 +1,7 @@
 package com.loudsight.meta;
 
 import com.loudsight.collection.MultiKeyMap;
-import com.loudsight.useful.helper.ClassHelper;
+import com.loudsight.helper.ClassHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;

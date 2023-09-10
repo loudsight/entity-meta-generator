@@ -1,16 +1,5 @@
 package com.loudsight.meta.generation;
 
-import com.loudsight.meta.EntityInstantiator;
-import com.loudsight.meta.MetaRepository;
-import com.loudsight.meta.entity.*;
-import com.loudsight.useful.helper.JvmClassHelper;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EntityInstantiatorTest {
