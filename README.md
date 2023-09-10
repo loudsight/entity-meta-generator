@@ -136,11 +136,9 @@ The `@Introspect` annotation processor simplifies the generation of metadata cla
 
 For more information and advanced usage, refer to the official documentation of the `@Introspect` annotation processor.
 
-Certainly, here's an updated "Troubleshooting" section that directs users to the project's GitHub issues page and encourages them to raise issues or contribute:
-
 ## Troubleshooting
 
-If you encounter any issues or have questions while using the `@Introspect` annotation processor, we encourage you to get involved in the project's development community. Here's how you can seek assistance:
+If you encounter any issues or have questions while using the `@Introspect` annotation processor, you can seek assistance in the following ways:
 
 1. **Raise an Issue**: If you believe you've found a bug, have a feature request, or need help with something specific to the annotation processor, please visit the project's [GitHub Issues Page](https://github.com/loudsight/entity-meta-generator/issues). Here, you can search for existing issues or open a new one to report your problem or request assistance. Please provide as much detail as possible to help us understand the issue.
 
