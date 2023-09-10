@@ -22,14 +22,22 @@ To use the `@Introspect` annotation processor, follow these steps:
         <scope>provided</scope>
     </dependency>
     ```
+   Include the @Introspect annotation processor library in your project's dependencies.
+   ```xml
+   <dependency>
+      <groupId>com.loudsight.meta</groupId>
+      <artifactId>entity-meta-generator-lib</artifactId>
+      <version>0.0.1</version>
+   </dependency>
+    ```
 
 2. **Annotate Your POJO**: Annotate your Java POJO class with `@Introspect`.
 
     ```java
     import com.loudsight.meta.annotation.Introspect;
-
-    @Introspect(clazz=MyPojo.class)
-    public class MyPojo {
+   
+    @Introspect(clazz = Person.class)
+    public static class Person {
         // ...
     }
     ```
@@ -47,84 +55,93 @@ Here is an example demonstrating how to use the `@Introspect` annotation process
 ```java
 import com.loudsight.meta.annotation.Introspect;
 
-@Introspect(clazz=Person.class)
-public class Person {
-    private String name;
-    private int age;
+@Introspect(clazz = Person.class)
+public static class Person {
+   private String name;
+   private String age;
 
-    public Person(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
+   public String getName() {
+      return name;
+   }
 
-    // Getters and setters...
+   public void setName(String name) {
+      this.name = name;
+   }
 
-    // Other methods...
+   public String getAge() {
+      return age;
+   }
+
+   public void setAge(String age) {
+      this.age = age;
+   }
+   // etc
 }
+
 ```
 
 After compiling your code, the annotation processor generates a class (e.g., `PersonMeta`) that implements the `Meta<Person>` interface. You can use this generated class to access metadata about the `Person` class.
 
 ```java
-PersonMeta personMeta = new PersonMeta();
+        PersonMeta personMeta = PersonMeta.getInstance();
 
-// Get the type name, package name, and simple type name
-System.out.println("Type Name: " + personMeta.getTypeName());
-System.out.println("Package Name: " + personMeta.getPackageName());
-System.out.println("Simple Type Name: " + personMeta.getSimpleTypeName());
+        // Get the type name, package name, and simple type name
+        System.out.println("Type Name: " + personMeta.getTypeName());
+        System.out.println("Package Name: " + personMeta.getPackageName());
+        System.out.println("Simple Type Name: " + personMeta.getSimpleTypeName());
 
-// Get the type class
-Class<Person> personClass = personMeta.getTypeClass();
-System.out.println("Type Class: " + personClass.getName());
+        // Get the type class
+        Class<Person> personClass = personMeta.getTypeClass();
+        System.out.println("Type Class: " + personClass.getName());
 
-// Get a collection of entity fields
-Collection<EntityField<Person, ?>> fields = personMeta.getFields();
-for (EntityField<Person, ?> field : fields) {
-    System.out.println("Field: " + field.getName());
-}
+        // Get a collection of entity fields
+        Collection<EntityField<Person, ?>> fields = personMeta.getFields();
+        for (EntityField<Person, ?> field : fields) {
+            System.out.println("Field: " + field.getName());
+        }
 
-// Get a list of entity constructors
-List<EntityConstructor> constructors = personMeta.getConstructors();
-for (EntityConstructor constructor : constructors) {
-    System.out.println("Constructor: " + constructor.getName());
-}
+        // Get a list of entity constructors
+        List<EntityConstructor> constructors = personMeta.getConstructors();
+        for (EntityConstructor constructor : constructors) {
+            System.out.println("Constructor: " + constructor);
+        }
 
-// Get a list of entity annotations
-List<EntityAnnotation> annotations = personMeta.getAnnotations();
-for (EntityAnnotation annotation : annotations) {
-    System.out.println("Annotation: " + annotation.getName());
-}
+        // Get a list of entity annotations
+        List<EntityAnnotation> annotations = personMeta.getAnnotations();
+        for (EntityAnnotation annotation : annotations) {
+            System.out.println("Annotation: " + annotation.getName());
+        }
 
-// Create a new instance of the Person class
-Person person = personMeta.newInstance();
-System.out.println("New Instance: " + person);
+        // Create a new instance of the Person class
+        Person person = personMeta.newInstance();
+        System.out.println("New Instance: " + person);
 
-// Create a new instance of the Person class with values
-Map<String, ?> values = Map.of("name", "John", "age", 30);
-Person john = personMeta.newInstance(values);
-System.out.println("New Instance with Values: " + john);
+        // Create a new instance of the Person class with values
+        Map<String, ?> values = Map.of("name", "John", "age", 30);
+        Person john = personMeta.newInstance(values);
+        System.out.println("New Instance with Values: " + john);
 
-// Get fields as a map
-Map<String, EntityField<Person, ?>> fieldMap = personMeta.getFieldAsMap();
-System.out.println("Fields as Map: " + fieldMap);
+        // Get fields as a map
+        Map<String, EntityField<Person, ?>> fieldMap = personMeta.getFieldAsMap();
+        System.out.println("Fields as Map: " + fieldMap);
 
-// Get a field by name
-EntityField<Person, ?> ageField = personMeta.getFieldByName("age");
-System.out.println("Age Field: " + ageField);
+        // Get a field by name
+        EntityField<Person, ?> ageField = personMeta.getFieldByName("age");
+        System.out.println("Age Field: " + ageField);
 
-// Get the type hierarchy
-List<Class<?>> typeHierarchy = personMeta.getTypeHierarchy();
-System.out.println("Type Hierarchy: " + typeHierarchy);
+        // Get the type hierarchy
+        List<Class<?>> typeHierarchy = personMeta.getTypeHierarchy();
+        System.out.println("Type Hierarchy: " + typeHierarchy);
 
-// Get a list of entity methods
-List<EntityMethod<Person, ?>> methods = personMeta.getMethods();
-for (EntityMethod<Person, ?> method : methods) {
-    System.out.println("Method: " + method.getName());
-}
+        // Get a list of entity methods
+        List<EntityMethod<Person, ?>> methods = personMeta.getMethods();
+        for (EntityMethod<Person, ?> method : methods) {
+            System.out.println("Method: " + method.name());
+        }
 
-// Convert the Person object to a map
-Map<String, Object> personMap = personMeta.toMap(person);
-System.out.println("Person as Map: " + personMap);
+        // Convert the Person object to a map
+        Map<String, Object> personMap = personMeta.toMap(person);
+        System.out.println("Person as Map: " + personMap);
 ```
 
 This basic example is not exhaustive, but, demonstrates simple uses of each of the methods defined in the `Meta<T>` interface to access metadata and perform various operations on the generated `PersonMeta` class.
