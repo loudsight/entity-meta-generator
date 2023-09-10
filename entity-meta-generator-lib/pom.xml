@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.loudsight.meta</groupId>
         <artifactId>entity-meta-generator</artifactId>
-        <version>0-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
 
     <properties>
@@ -14,7 +14,6 @@
 
     <artifactId>entity-meta-generator-lib</artifactId>
     <packaging>jar</packaging>
-    <version>0-SNAPSHOT</version>
 
     <name>entity-meta-generator-lib</name>
 
