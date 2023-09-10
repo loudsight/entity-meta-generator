@@ -13,7 +13,7 @@ public record EntityMethod<T, R>(String name,
         R apply(T instance, Object... params);
     }
 
-    R invoke(T instance, Object... params) {
+    public R invoke(T instance, Object... params) {
         return invoker.apply(instance, params);
     }
 }
