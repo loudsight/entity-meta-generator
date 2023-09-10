@@ -61,7 +61,7 @@ public abstract class EntityTransform<T> {
     protected int readInt(Iterator<Byte> bytes) {
         var length = 0;
         for (int i  = 0; i  < 4; i ++) {
-            length += Integer.valueOf(bytes.next()) & 0xff >> i * 8;
+            length += ((Integer.valueOf(bytes.next()) & 0xff) << i * 8);
         }
         return length;
     }

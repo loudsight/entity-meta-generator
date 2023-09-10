@@ -3,43 +3,28 @@ package com.loudsight.meta.serialization.transform;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LongEntityTransformTest {
+public class LongEntityTransformTest extends NumberEntityTransformTest<Long> {
 
-    @Test
-    public void testOne() {
-        testValue(1L);
+    LongEntityTransformTest() {
+        super(-1L, 0L, 10L, Long.MAX_VALUE, Long.MIN_VALUE);
     }
 
-    @Test
-    public void testZero() {
-        testValue(0L);
+
+    @Override
+    protected Iterable<Byte> serializeEntity(Long entity) {
+        ArrayList<Byte> bytes = new ArrayList<>();
+        LongEntityTransform.getInstance().serializeEntity(entity, bytes);
+
+        return bytes;
     }
 
-    @Test
-    public void testLong10() {
-        testValue(10L);
-    }
-
-    @Test
-    public void testLongMax() {
-        testValue(Long.MAX_VALUE);
-    }
-
-    @Test
-    public void testLongMin() {
-        testValue(Long.MIN_VALUE);
-    }
-
-    private void testValue(long expected) {
-        List<Byte> bytes = new ArrayList<>();
-        LongEntityTransform.getInstance().serializeEntity(expected, bytes);
-        bytes.remove(0);
-        long actual = LongEntityTransform.getInstance().deserializeEntity(bytes.iterator());
-
-        assertEquals(expected, actual);
+    @Override
+    protected Long deserializeEntity(Iterable<Byte> bytes) {
+        return LongEntityTransform.getInstance().deserializeEntity(bytes.iterator());
     }
 }

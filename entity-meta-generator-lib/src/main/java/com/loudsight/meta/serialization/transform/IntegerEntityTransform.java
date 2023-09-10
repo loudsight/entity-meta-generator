@@ -6,16 +6,16 @@ import com.loudsight.meta.serialization.EntityType;
 import java.util.Iterator;
 import java.util.List;
 
-public class IntEntityTransform extends EntityTransform<Integer> {
+public class IntegerEntityTransform extends EntityTransform<Integer> {
 
     private static class IntEntityTransformHolder {
-        private static final IntEntityTransform INSTANCE = new IntEntityTransform();
+        private static final IntegerEntityTransform INSTANCE = new IntegerEntityTransform();
     }
     // global access point
-    public static IntEntityTransform getInstance() {
-        return IntEntityTransform.IntEntityTransformHolder.INSTANCE;
+    public static IntegerEntityTransform getInstance() {
+        return IntegerEntityTransform.IntEntityTransformHolder.INSTANCE;
     }
-    private IntEntityTransform() {
+    private IntegerEntityTransform() {
         super(EntityType.INTEGER, Integer.class);
     }
 

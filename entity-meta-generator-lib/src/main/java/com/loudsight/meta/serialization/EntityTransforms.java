@@ -26,7 +26,7 @@ public class EntityTransforms {
         register(EnumEntityTransform.getInstance());
         register(LongEntityTransform.getInstance());
         register(DoubleEntityTransform.getInstance());
-        register(IntEntityTransform.getInstance());
+        register(IntegerEntityTransform.getInstance());
         register(ListEntityTransform.getInstance());
         register(SetEntityTransform.getInstance());
         register(MapEntityTransform.getInstance());

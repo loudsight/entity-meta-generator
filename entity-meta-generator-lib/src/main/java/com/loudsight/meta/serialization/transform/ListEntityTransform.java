@@ -18,7 +18,7 @@ private static class ListEntityTransformHolder {
 
 
     private ListEntityTransform() {
-        super(EntityType.SET, (Class<List<?>>)(Object)List.class);
+        super(EntityType.LIST, (Class<List<?>>)(Object)List.class);
     }
 
     @Override public List<?> newCollection(int size, Function<Integer, Object> init) {
