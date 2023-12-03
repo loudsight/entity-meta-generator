@@ -56,7 +56,7 @@ public final class IntrospectAnnotationProcessor
         for (AttributeDescriptor attribute : classDescriptor.getAttributes()) {
             Optional<MethodDescriptor> setter = classDescriptor.getMethods().stream()
                     .filter(method ->
-                    method.getName().toLowerCase().equals(String.format("set%s",attribute.getName().toLowerCase())))
+                    method.getName().toLowerCase().equals(String.format("set%s",attribute.name().toLowerCase())))
                     .findFirst();
             attributeSetterMapping.put(attribute, setter);
         }
