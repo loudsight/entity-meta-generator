@@ -44,7 +44,7 @@ public enum EntityType {
         var res = codeToEntityType.get(code);
 
         if (res == null) {
-            throw new IllegalArgumentException("Unknown entity type code: $code");
+            throw new IllegalArgumentException("Unknown entity type code: " + code);
         }
 
         return res;

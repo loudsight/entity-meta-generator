@@ -42,7 +42,7 @@ public abstract class DefaultMeta<T> implements Meta<T> {
         this.methods = methods;
 
         var fieldMap = new TreeMap<String, EntityField<T, ?>>(String::compareTo);
-        fields.forEach(it -> fieldMap.put(it.getName(), it));
+        fields.forEach(it -> fieldMap.put(it.name(), it));
 
         this.fieldMap = Collections.unmodifiableMap(fieldMap);
     }

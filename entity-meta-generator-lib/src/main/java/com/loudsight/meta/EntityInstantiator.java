@@ -40,10 +40,10 @@ public class EntityInstantiator {
 
                 Object convertedValue;
                 if (field.isEnum() && fieldValue instanceof String) {
-                    var meta = MetaRepository.getInstance().getMeta(field.getTypeClass());
+                    var meta = MetaRepository.getInstance().getMeta(field.typeClass());
                             convertedValue = meta.newInstance(Map.of("name", fieldValue));
                 } else {
-                    convertedValue = TypeConverters.getInstance().convert(fieldValue, field.getTypeClass());
+                    convertedValue = TypeConverters.getInstance().convert(fieldValue, field.typeClass());
                 }
 //
                 return convertedValue;
@@ -98,11 +98,12 @@ public class EntityInstantiator {
                 .filter(it -> it.getEntityParameters().isEmpty())
                 .toList();
 //                .forEach(it -> {
-        var entity = c.get(0).<T>newInstance();
 
         if (c.isEmpty()) {
             throw new IllegalStateException("Cannot invoke any constructors with " + paramsMap);
         }
+
+        var entity = c.get(0).<T>newInstance();
 
         paramsMap
                 .entrySet()
@@ -114,10 +115,10 @@ public class EntityInstantiator {
                     var field = fieldsMap.get(fieldName);
                     Object convertedValue;
                     if (field.isEnum() && fieldValue instanceof String) {
-                        var meta = MetaRepository.getInstance().getMeta(field.getTypeClass());
+                        var meta = MetaRepository.getInstance().getMeta(field.typeClass());
                         convertedValue = meta.newInstance(Map.of("name", fieldValue));
                     } else {
-                        convertedValue = TypeConverters.getInstance().convert(fieldValue, field.getTypeClass());
+                        convertedValue = TypeConverters.getInstance().convert(fieldValue, field.typeClass());
                     }
                     field.set(entity, convertedValue);
                 });

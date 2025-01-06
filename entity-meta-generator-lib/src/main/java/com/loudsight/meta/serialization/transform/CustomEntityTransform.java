@@ -52,7 +52,7 @@ public class CustomEntityTransform extends EntityTransform<Object> {
                 .stream()
             .filter( it -> it.get(entity) != null)
             .map(it -> {
-                writeStr(it.getName(), fieldBytes);
+                writeStr(it.name(), fieldBytes);
                 var fieldValue = it.get(entity);
                 serialize(fieldValue, fieldBytes);
                 return 0;
