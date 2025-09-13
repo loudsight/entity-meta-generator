@@ -25,6 +25,7 @@ public class EntityHelper {
             LocalDateTime.class
     );
 
+    @FunctionalInterface
     public interface Converter<F, T> extends Function<F, T> {
 
     }

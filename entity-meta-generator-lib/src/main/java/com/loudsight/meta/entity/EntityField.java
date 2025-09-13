@@ -18,6 +18,7 @@ public record EntityField<E, T> (
         @Transient Setter<E, T> setter) {
 
 
+    @FunctionalInterface
     public interface Setter<E, T> {
         void apply(E entity, T value);
     }

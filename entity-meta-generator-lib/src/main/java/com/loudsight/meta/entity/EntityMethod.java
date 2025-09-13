@@ -9,6 +9,7 @@ public record EntityMethod<T, R>(String name,
                                  List<EntityAnnotation> annotations,
                                  Invoker<T, R> invoker) {
 
+    @FunctionalInterface
     interface Invoker<T, R> {
         R apply(T instance, Object... params);
     }
