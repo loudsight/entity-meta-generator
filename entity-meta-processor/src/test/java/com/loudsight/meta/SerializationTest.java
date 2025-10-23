@@ -7,12 +7,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SerializationTest {
-    static {
-        MetaRepository.getInstance().register(SimpleClassMeta.getInstance());
-        MetaRepository.getInstance().register(SimpleEnumMeta.getInstance());
-        MetaRepository.getInstance().register(GenericTypeMeta.getInstance());
-    }
-
     @Test
     public void testSimpleClass() {
         SimpleClass entity = new SimpleClass();

@@ -18,11 +18,6 @@ public class MetaRepository {
     private final Map<String, Meta<?>> metaByTypeName = new HashMap<>();
     private final Map<Class<?>, Meta<?>> metaByClass = new HashMap<>();
 
-    public void register(Meta<?> meta) {
-        metaByTypeName.put(meta.getTypeName(), meta);
-        metaByClass.put(meta.getTypeClass(), meta);
-    }
-
     private static <T> Meta<T> loadMeta(Class<T> someClass) {
         return loadMeta(someClass.getName());
     }
@@ -54,7 +49,6 @@ public class MetaRepository {
             return ClassHelper.uncheckedCast(metaByTypeName.computeIfAbsent(typeName, it -> {
                 var meta = loadMeta(typeName);
                 metaByClass.put(meta.getTypeClass(), meta);
-                register(meta);
                 return meta;
             }));
         } catch (Exception e) {
