@@ -28,7 +28,7 @@ public class EntityMetaProcessor {
 
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (logger.isInfoEnabled()) {
-            logger.info("processing " + annotations);
+            logger.logInfo("processing " + annotations);
         }
         Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith(Introspect.class);
 
@@ -40,7 +40,7 @@ public class EntityMetaProcessor {
 
     public MetaInfo transformElementToModel(Element element, Introspect annotation) {
         if (logger.isInfoEnabled()) {
-            logger.info("processing " + element);
+            logger.logInfo("processing " + element);
         }
 
         try {

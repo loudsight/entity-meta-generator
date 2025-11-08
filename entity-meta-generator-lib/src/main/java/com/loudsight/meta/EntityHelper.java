@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public class EntityHelper {
     //    companion object {
-    private static final Logger logger = LoggerFactory.getLogger(EntityHelper.class);
+    private static final LoggingHelper logger = LoggingHelper.wrap(EntityHelper.class);
 
     private static final List<Class<?>> primitives = List.of(
             boolean.class,
@@ -82,7 +82,7 @@ public class EntityHelper {
 //                    return uncheckedCast(result);
 //                }
         } catch (Exception e) {
-            logger.error("Unexpected error", e);
+            logger.logError("Unexpected error", e);
         }
         return ClassHelper.uncheckedCast(result);
     }
