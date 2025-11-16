@@ -49,8 +49,8 @@ public abstract class DefaultMeta<T> implements Meta<T> {
 
     //    private val methodMap: Map<String, EntityMethod<T, *>>
 //        get() {
-////            val sortedEntityMethods: List<EntityMethod<T, *>> = ArrayList(entityMethods)
-////                .sortedBy { obj: EntityMethod<T, *> -> obj.name }
+//            val sortedEntityMethods: List<EntityMethod<T, *>> = ArrayList(entityMethods)
+//                .sortedBy { obj: EntityMethod<T, *> -> obj.name }
 //
 //            return methods.associateBy({ obj: EntityMethod<T, *> -> obj.name }, { it })
 //        }
@@ -104,12 +104,9 @@ public abstract class DefaultMeta<T> implements Meta<T> {
     public final EntityField<T, ?> getFieldByName(String name) {
         return fieldMap.get(name);
     }
-////
-////    fun getMethod(methodName: String): EntityMethod<T, ?> {
-////        return methodMap[methodName]!!
-////    }
-//
-@Override
+    // TODO: Implement getMethod when needed
+
+    @Override
     public Map<String, Object> toMap(T entity) {
         return fieldMap
                 .entrySet()

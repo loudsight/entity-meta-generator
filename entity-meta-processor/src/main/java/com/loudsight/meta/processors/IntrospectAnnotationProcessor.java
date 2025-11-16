@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @SupportedAnnotationTypes("com.loudsight.meta.annotation.Introspect")
-@SupportedSourceVersion(SourceVersion.RELEASE_17)
+@SupportedSourceVersion(SourceVersion.RELEASE_25)
 @AutoService(Processor.class)
 public final class IntrospectAnnotationProcessor
         extends AbstractAnnotationProcessor<Introspect, MetaInfo> {

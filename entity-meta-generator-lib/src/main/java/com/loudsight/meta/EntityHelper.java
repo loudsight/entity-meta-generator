@@ -1,13 +1,16 @@
 package com.loudsight.meta;
 
-import com.loudsight.collection.MultiKeyMap;
-import com.loudsight.helper.ClassHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 
+import com.loudsight.collection.MultiKeyMap;
+import com.loudsight.helper.ClassHelper;
+import com.loudsight.helper.logging.LoggingHelper;
+
+/**
+ * Helper class for entity conversion and manipulation.
+ */
 public class EntityHelper {
     //    companion object {
     private static final LoggingHelper logger = LoggingHelper.wrap(EntityHelper.class);
@@ -36,10 +39,19 @@ public class EntityHelper {
         converters.put(Integer.class, Long.class, it -> Long.valueOf((Integer)it));
     }
 
+    /**
+     * Checks if a class is a primitive type.
+     * @param entity the class to check
+     * @return true if the class is a primitive type
+     */
     public static boolean isPrimitive(Class<?> entity) {
         return primitives.contains(entity);
     }
 
+    /**
+     * Gets the converters map.
+     * @return the converters map
+     */
     public static MultiKeyMap<Class<?>, Class<?>, Converter<Object, ?>> converters() {
 //            return java.util.Map.of<Pair<Class<?>, Class<?>?>, Function<?, ?>>(
 //                Pair<Class<?>, Class<?>?>(Long.class.java, Int.class.javaPrimitiveType),
@@ -48,6 +60,12 @@ public class EntityHelper {
         return converters;
     }
 
+    /**
+     * Converts a value to the target class.
+     * @param value the value to convert
+     * @param targetClass the target class
+     * @return the converted value
+     */
     public static <T> T convert(Object value, Class<T> targetClass) {
 
         var result = value;

@@ -1,17 +1,26 @@
 package com.loudsight.meta.serialization.transform;
 
-import com.loudsight.meta.serialization.EntityTransform;
-import com.loudsight.meta.serialization.EntityType;
-
 import java.util.Iterator;
 import java.util.List;
 
+import com.loudsight.meta.serialization.EntityTransform;
+import com.loudsight.meta.serialization.EntityType;
+
+/**
+ * EntityTransform implementation for Boolean types.
+ */
 public class BooleanEntityTransform extends EntityTransform<Boolean> {
 
+/**
+ * Holder for singleton instance.
+ */
 private static class BooleanEntityTransformHolder {
     private static final BooleanEntityTransform INSTANCE = new BooleanEntityTransform();
 }
-    // global access point
+    /**
+     * Returns singleton instance of BooleanEntityTransform.
+     * @return the singleton instance
+     */
     public static BooleanEntityTransform getInstance() {
         return BooleanEntityTransformHolder.INSTANCE;
     }

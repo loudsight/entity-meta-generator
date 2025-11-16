@@ -6,12 +6,12 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.loudsight</groupId>
-        <version>0.0.19-SNAPSHOT</version>
+        <version>0.0.18</version>
     </parent>
 
     <groupId>com.loudsight.meta</groupId>
     <artifactId>entity-meta-generator</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Loudsight entity-meta-generator Parent</name>
@@ -35,12 +35,12 @@
     </developers>
 
     <scm>
-        <connection>scm:git@github.com:loudsight/utilities.git</connection>
-        <developerConnection>scm:git@github.com:loudsight/utilities.git</developerConnection>
-        <url>git@github.com:loudsight/utilities.git</url>
+        <connection>scm:git@github.com:loudsight/entity-meta-generator.git</connection>
+        <developerConnection>scm:git@github.com:loudsight/entity-meta-generator.git</developerConnection>
+        <url>git@github.com:loudsight/entity-meta-generator.git</url>
     </scm>
+
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <release.arguments />
     </properties>
 

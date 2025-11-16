@@ -1,12 +1,12 @@
 package com.loudsight.meta;
 
+import java.util.Collection;
+import java.util.Map;
+
 import com.loudsight.meta.entity.EntityConstructor;
 import com.loudsight.meta.entity.EntityField;
 import com.loudsight.meta.entity.EntityParameter;
 import com.loudsight.meta.serialization.TypeConverters;
-
-import java.util.Collection;
-import java.util.Map;
 
 public class EntityInstantiator {
 
@@ -49,7 +49,7 @@ public class EntityInstantiator {
                 return convertedValue;
 //            } else {
 //                type = type.replace("<out ", "<")
-////                var e = EntityTransforms.getEntityType(it.parameterType.java, value)
+//                var e = EntityTransforms.getEntityType(it.parameterType.java, value)
 //                if (type.startsWith("kotlin.Array<")) {
 //                    value = helper.eval(type.replace("kotlin.Array", "arrayOf") + "()")
 //                    return@map value

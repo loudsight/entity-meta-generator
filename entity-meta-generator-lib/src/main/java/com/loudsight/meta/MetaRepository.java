@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MetaRepository {
     private static class MetaRepositoryHolder {
@@ -15,8 +16,8 @@ public class MetaRepository {
         return MetaRepositoryHolder.INSTANCE;
     }
 
-    private final Map<String, Meta<?>> metaByTypeName = new HashMap<>();
-    private final Map<Class<?>, Meta<?>> metaByClass = new HashMap<>();
+    private final Map<String, Meta<?>> metaByTypeName = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Meta<?>> metaByClass = new ConcurrentHashMap<>();
 
     private static <T> Meta<T> loadMeta(Class<T> someClass) {
         return loadMeta(someClass.getName());
