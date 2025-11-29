@@ -234,7 +234,7 @@ public class MetaSourceCodeGenerator {
             }).collect(Collectors.joining(", "));
 
 
-        FieldSpec fieldsField = FieldSpec.builder(listType, "fields")
+        FieldSpec fieldsField = FieldSpec.builder(listType, "_fields")
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
                 .initializer(String.format("java.util.List.of(%s)", fieldList
                         )
@@ -542,7 +542,7 @@ public class MetaSourceCodeGenerator {
                                 "%s",
                                             "${simpleTypeName}",
                                             ${simpleTypeName}.class,
-                                            ${simpleTypeName}Meta.fields,
+                                            ${simpleTypeName}Meta._fields,
                                             ${simpleTypeName}Meta.constructors,
                                             ${simpleTypeName}Meta.annotations,
                                             ${simpleTypeName}Meta.typeHierarchy,

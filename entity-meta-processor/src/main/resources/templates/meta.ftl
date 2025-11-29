@@ -27,7 +27,7 @@ public class ${simpleTypeName}Meta extends DefaultMeta<${simpleTypeName}> {
 
     ${fields}
 
-    private static final List<EntityField<${simpleTypeName}, ?>> fields = List.of(
+    private static final List<EntityField<${simpleTypeName}, ?>> _fields = List.of(
         // ${fieldList}
     );
 
@@ -39,7 +39,7 @@ public class ${simpleTypeName}Meta extends DefaultMeta<${simpleTypeName}> {
         // ${annotationList}
     );
 
-    private static final Map<String, EntityField<${simpleTypeName}, ?>> mapOfFields = fields.stream().collect(
+    private static final Map<String, EntityField<${simpleTypeName}, ?>> mapOfFields = _fields.stream().collect(
                                                                                         Collectors.toMap(
                                                                                             it -> it.getName(),
                                                                                             it -> it
@@ -51,7 +51,7 @@ public class ${simpleTypeName}Meta extends DefaultMeta<${simpleTypeName}> {
         "${packageName}.${simpleTypeName}",
                     "${simpleTypeName}",
                     ${simpleTypeName}.class,
-                    ${simpleTypeName}Meta.fields,
+                    ${simpleTypeName}Meta._fields,
                     ${simpleTypeName}Meta.constructors,
                     ${simpleTypeName}Meta.annotations,
                     Collections.emptyList(),
