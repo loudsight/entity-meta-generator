@@ -36,10 +36,13 @@ public final class IntrospectAnnotationProcessor
 
     @Override
     void validateElement(Element annotatedElement) throws BadAnnotationUsageException {
-        if (!annotatedElement.getKind().isClass()) {
+        // Accept both regular classes and records
+        boolean isClassOrRecord = annotatedElement.getKind().isClass() || 
+                                  "RECORD".equals(annotatedElement.getKind().toString());
+        if (!isClassOrRecord) {
             throw new BadAnnotationUsageException(annotatedElement.getSimpleName().toString(),
                     ANNOTATION_NAME,
-                    "Only classes may use this annotation");
+                    "Only classes and records may use this annotation");
         } else {
             if (annotatedElement.getModifiers().contains(Modifier.ABSTRACT)) {
                 throw new BadAnnotationUsageException(annotatedElement.getSimpleName().toString(),

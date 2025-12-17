@@ -6,7 +6,7 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>com.loudsight</groupId>
-        <version>0.0.18</version>
+        <version>0.0.19-SNAPSHOT</version>
     </parent>
 
     <groupId>com.loudsight.meta</groupId>

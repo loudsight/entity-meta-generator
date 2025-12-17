@@ -44,6 +44,11 @@
               <artifactId>auto-service</artifactId>
               <version>1.0.1</version>
             </path>
+            <path>
+              <groupId>com.loudsight.meta</groupId>
+              <artifactId>entity-meta-processor</artifactId>
+              <version>${project.version}</version>
+            </path>
           </annotationProcessorPaths>
         </configuration>
       </plugin>
