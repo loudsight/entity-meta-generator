@@ -1,7 +1,7 @@
 package com.loudsight.meta.serialization;
 
 
-import com.loudsight.helper.JvmClassHelper;
+import com.loudsight.useful.helper.JvmClassHelper;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;

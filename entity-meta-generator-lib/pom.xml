@@ -19,8 +19,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.loudsight</groupId>
-            <artifactId>basic-helper</artifactId>
+            <groupId>com.loudsight.useful</groupId>
+            <artifactId>helper</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

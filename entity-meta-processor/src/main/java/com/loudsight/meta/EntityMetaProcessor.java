@@ -10,7 +10,7 @@ import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import com.loudsight.helper.logging.LoggingHelper;
+import com.loudsight.useful.helper.logging.LoggingHelper;
 import com.loudsight.meta.annotation.Introspect;
 import com.loudsight.meta.generation.MetaGeneratorService;
 

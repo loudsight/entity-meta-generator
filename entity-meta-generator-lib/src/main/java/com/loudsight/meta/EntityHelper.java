@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.loudsight.collection.MultiKeyMap;
-import com.loudsight.helper.ClassHelper;
-import com.loudsight.helper.logging.LoggingHelper;
+import com.loudsight.useful.helper.ClassHelper;
+import com.loudsight.useful.helper.logging.LoggingHelper;
 
 /**
  * Helper class for entity conversion and manipulation.

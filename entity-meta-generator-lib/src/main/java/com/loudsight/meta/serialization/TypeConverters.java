@@ -1,6 +1,6 @@
 package com.loudsight.meta.serialization;
 
-import com.loudsight.helper.ClassHelper;
+import com.loudsight.useful.helper.ClassHelper;
 
 import java.util.HashMap;
 import java.util.Map;

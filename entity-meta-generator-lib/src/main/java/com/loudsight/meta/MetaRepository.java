@@ -1,6 +1,6 @@
 package com.loudsight.meta;
 
-import com.loudsight.helper.ClassHelper;
+import com.loudsight.useful.helper.ClassHelper;
 
 import java.util.Collection;
 import java.util.HashMap;
