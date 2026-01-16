@@ -5,19 +5,34 @@ import com.loudsight.meta.MetaRepository;
 import com.loudsight.meta.serialization.EntityTransform;
 import com.loudsight.meta.serialization.EntityType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class CustomEntityTransform extends EntityTransform<Object> { 
+    private static final Logger logger = LoggerFactory.getLogger(CustomEntityTransform.class);
+    
+    private static final int MAX_SERIALIZATION_DEPTH = 100;
+    
+    private static final ThreadLocal<Set<Object>> SERIALIZATION_STACK = 
+            ThreadLocal.withInitial(() -> Collections.newSetFromMap(new IdentityHashMap<>()));
+    
+    private static final ThreadLocal<Integer> SERIALIZATION_DEPTH = 
+            ThreadLocal.withInitial(() -> 0);
 
     private static class CustomEntityTransformHolder {
         private static final CustomEntityTransform INSTANCE = new CustomEntityTransform();
     }
     // global access point
     public static CustomEntityTransform getInstance() {
-        return CustomEntityTransform.CustomEntityTransformHolder.INSTANCE;
+        return CustomEntityTransformHolder.INSTANCE;
     }
     private CustomEntityTransform() {
         super(EntityType.CUSTOM, Object.class);
@@ -29,37 +44,88 @@ public class CustomEntityTransform extends EntityTransform<Object> {
     }
 
     private <T> void serializeEntityX(T entity, List<Byte> bytes) {
-
-        var meta = MetaRepository.getInstance().getMeta((Class<T>)entity.getClass());
-        if (meta == null) {
-            throw new IllegalArgumentException("Unknown entity class: " + entity.getClass().getSimpleName());
-        }
-
-        bytes.add(EntityType.CUSTOM.getCode());
-        writeStr(meta.getTypeName(), bytes);
-
-        var fieldBytes = new ArrayList<Byte>();
-
-//        var subtypeFields = meta.typeHierarchy
-//            .map { MetaRepository.getMeta(it) as Meta<T> }
-//            .flatMap { it.fields }
-//
-//        var fields = Stream.concat(subtypeFields.stream(), meta.fields.stream())
-//            .collect(Collectors.toList())
-
-
-        var fieldCount = meta.getFields()
-                .stream()
-            .filter( it -> it.get(entity) != null)
-            .map(it -> {
-                writeStr(it.name(), fieldBytes);
-                var fieldValue = it.get(entity);
-                serialize(fieldValue, fieldBytes);
-                return 0;
-            }).count();
+        Set<Object> stack = SERIALIZATION_STACK.get();
+        int depth = SERIALIZATION_DEPTH.get();
         
-        writeInt(Long.valueOf(fieldCount).intValue(), bytes);
-        bytes.addAll(fieldBytes);
+        try {
+            if (stack.contains(entity)) {
+                String errorMsg = String.format(
+                        "Circular reference detected while serializing %s (identity=%d). " +
+                        "Serialization stack contains %d objects. Entity: %s",
+                        entity.getClass().getName(),
+                        System.identityHashCode(entity),
+                        stack.size(),
+                        safeToString(entity));
+                logger.error(errorMsg);
+                throw new IllegalStateException(errorMsg);
+            }
+            
+            if (depth > MAX_SERIALIZATION_DEPTH) {
+                String errorMsg = String.format(
+                        "Max serialization depth (%d) exceeded while serializing %s. " +
+                        "This may indicate a circular reference or deeply nested structure. Entity: %s",
+                        MAX_SERIALIZATION_DEPTH,
+                        entity.getClass().getName(),
+                        safeToString(entity));
+                logger.error(errorMsg);
+                throw new IllegalStateException(errorMsg);
+            }
+            
+            stack.add(entity);
+            SERIALIZATION_DEPTH.set(depth + 1);
+            
+            var meta = MetaRepository.getInstance().getMeta((Class<T>)entity.getClass());
+            if (meta == null) {
+                throw new IllegalArgumentException("Unknown entity class: " + entity.getClass().getSimpleName());
+            }
+
+            if (logger.isTraceEnabled()) {
+                logger.trace("Serializing entity: type={}, depth={}, stackSize={}", 
+                        meta.getTypeName(), depth, stack.size());
+            }
+
+            bytes.add(EntityType.CUSTOM.getCode());
+            writeStr(meta.getTypeName(), bytes);
+
+            var fieldBytes = new ArrayList<Byte>();
+
+            var fieldCount = meta.getFields()
+                    .stream()
+                .filter(it -> it.get(entity) != null)
+                .map(it -> {
+                    writeStr(it.name(), fieldBytes);
+                    var fieldValue = it.get(entity);
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("  Serializing field: name={}, valueType={}", 
+                                it.name(), 
+                                fieldValue != null ? fieldValue.getClass().getSimpleName() : "null");
+                    }
+                    serialize(fieldValue, fieldBytes);
+                    return 0;
+                }).count();
+            
+            writeInt(Long.valueOf(fieldCount).intValue(), bytes);
+            bytes.addAll(fieldBytes);
+        } finally {
+            stack.remove(entity);
+            SERIALIZATION_DEPTH.set(depth);
+            if (depth == 0) {
+                stack.clear();
+            }
+        }
+    }
+    
+    private String safeToString(Object entity) {
+        try {
+            String str = entity.toString();
+            if (str.length() > 200) {
+                return str.substring(0, 200) + "...";
+            }
+            return str;
+        } catch (Exception e) {
+            return entity.getClass().getName() + "@" + System.identityHashCode(entity) + 
+                    " (toString failed: " + e.getMessage() + ")";
+        }
     }
 
     @Override public Object  deserializeEntity(Iterator<Byte> bytes) {
