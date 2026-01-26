@@ -15,7 +15,7 @@
     <artifactId>entity-meta-generator-lib</artifactId>
     <packaging>jar</packaging>
 
-    <name>entity-meta-generator-lib</name>
+    <name>Loudsight entity-meta-generator-lib</name>
 
     <dependencies>
         <dependency>
