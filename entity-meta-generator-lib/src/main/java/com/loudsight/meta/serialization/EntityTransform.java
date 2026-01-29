@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import org.agrona.DirectBuffer;
 
 /**
  * Abstract base class for entity serialization and deserialization.
@@ -195,6 +197,38 @@ public abstract class EntityTransform<T> {
         }
 
         /**
+         * Deserializes an entity from a DirectBuffer.
+         * @param buffer the DirectBuffer containing data
+         * @param offset the offset in bytes
+         * @param length the length in bytes
+         * @return the deserialized entity
+         */
+        public static <T> T deserialize(DirectBuffer buffer, int offset, int length) {
+            var byteIterator = new Iterator<Byte>() {
+                int index = offset;
+                final int endIndex = offset + length;
+
+                @Override
+                public boolean hasNext() {
+                    return index < endIndex;
+                }
+
+                @Override
+                public Byte next() {
+                    if (index >= endIndex || index >= buffer.capacity()) {
+                        System.err.println("DirectBuffer iterator error: index=" + index + ", endIndex=" + endIndex + ", capacity=" + buffer.capacity());
+                        throw new NoSuchElementException();
+                    }
+                    var res = buffer.getByte(index);
+                    index++;
+                    return res;
+                }
+            };
+
+            return deserialize(byteIterator);
+        }
+
+        /**
          * Deserializes an entity from a byte array with offset and length.
          * @param bytes the byte array
          * @param offset the offset
@@ -232,5 +266,70 @@ public abstract class EntityTransform<T> {
 
             return (T)entityTransform.deserializeEntity(bytes);
         }
+    
+    /**
+     * Deserializes an entity from a byte iterator with fragment support.
+     * This method can handle partial data and will return INCOMPLETE if more data is needed.
+     * @param bytes the byte iterator
+     * @return the fragment result
+     */
+    public static <T> FragmentResult<T> deserializeFragment(Iterator<Byte> bytes) {
+        // Create a counting iterator to track bytes consumed
+        var countingIterator = new CountingIterator(bytes);
+        
+        try {
+            // Read entity type code (1 byte)
+            if (!countingIterator.hasNext()) {
+                return FragmentResult.incomplete(0);
+            }
+            byte entityTypeByte = countingIterator.next();
+            
+            var entityType = EntityType.getEntityType(entityTypeByte);
+            var entityTransform = EntityTransforms.getInstance().getEntityTransform(entityType);
+            
+            // Try to deserialize the entity
+            T entity = (T)entityTransform.deserializeEntity(countingIterator);
+            
+            return FragmentResult.success(entity, countingIterator.getCount());
+            
+        } catch (NoSuchElementException e) {
+            // Ran out of data during deserialization
+            return FragmentResult.incomplete(countingIterator.getCount());
+        } catch (Exception e) {
+            // Invalid data
+            return FragmentResult.invalid(countingIterator.getCount());
+        }
+    }
+    
+    /**
+     * Iterator wrapper that counts how many bytes have been consumed.
+     */
+    private static class CountingIterator implements Iterator<Byte> {
+        private final Iterator<Byte> delegate;
+        private int count = 0;
+        
+        public CountingIterator(Iterator<Byte> delegate) {
+            this.delegate = delegate;
+        }
+        
+        @Override
+        public boolean hasNext() {
+            return delegate.hasNext();
+        }
+        
+        @Override
+        public Byte next() {
+            if (!delegate.hasNext()) {
+                throw new NoSuchElementException();
+            }
+            Byte b = delegate.next();
+            count++;
+            return b;
+        }
+        
+        public int getCount() {
+            return count;
+        }
+    }
 //    }
 }
