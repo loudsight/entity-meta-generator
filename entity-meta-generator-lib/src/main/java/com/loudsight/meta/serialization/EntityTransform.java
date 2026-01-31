@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import com.loudsight.useful.helper.logging.LoggingHelper;
 import org.agrona.DirectBuffer;
 
 /**
@@ -15,6 +17,7 @@ import org.agrona.DirectBuffer;
  * @param <T> the entity type
  */
 public abstract class EntityTransform<T> {
+    private static final LoggingHelper logger = LoggingHelper.wrap(LoggingHelper.class);
 
     /**
      * The entity type associated with this transform.
@@ -137,8 +140,17 @@ public abstract class EntityTransform<T> {
          */
         public static String  readStr(Iterator<Byte> bytes) {
             var length = StringEntityTransform.getInstance().readInt(bytes);
+            if (length < 0 || length > 100000) {
+                // Capture and log the issue with full context
+                var ex = new IllegalStateException("readStr: invalid length=" + length + " (0x" + Integer.toHexString(length) + ")");
+                logger.logError("[EntityTransform] {}", ex.getMessage(), ex);
+                throw ex;
+            }
             var outBytes = new ArrayList<Byte>();
             for (int i  = 0; i  < length; i ++) {
+                if (!bytes.hasNext()) {
+                    logger.logError("[EntityTransform] readStr: iterator exhausted at i=" + i + ", expected length=" + length);
+                }
                 outBytes.add(bytes.next());
             }
             // todo fixme
@@ -208,6 +220,10 @@ public abstract class EntityTransform<T> {
                 int index = offset;
                 final int endIndex = offset + length;
 
+                public int getPosition() {
+                    return index - offset; // Position relative to data start
+                }
+
                 @Override
                 public boolean hasNext() {
                     return index < endIndex;
@@ -216,12 +232,17 @@ public abstract class EntityTransform<T> {
                 @Override
                 public Byte next() {
                     if (index >= endIndex || index >= buffer.capacity()) {
-                        System.err.println("DirectBuffer iterator error: index=" + index + ", endIndex=" + endIndex + ", capacity=" + buffer.capacity());
+                        logger.logError("DirectBuffer iterator error: index=" + index + ", endIndex=" + endIndex + ", capacity=" + buffer.capacity());
                         throw new NoSuchElementException();
                     }
                     var res = buffer.getByte(index);
                     index++;
                     return res;
+                }
+
+                @Override
+                public String toString() {
+                    return "Iterator[pos=" + (index - offset) + "/" + length + "]";
                 }
             };
 

@@ -30,7 +30,7 @@ public class EntityTransforms {
         register(ListEntityTransform.getInstance());
         register(SetEntityTransform.getInstance());
         register(MapEntityTransform.getInstance());
-        register(LocalDateTimeEntityTransform.getInstance());
+        register(TemporalEntityTransform.getInstance());
         register(CustomEntityTransform.getInstance());
     }
 

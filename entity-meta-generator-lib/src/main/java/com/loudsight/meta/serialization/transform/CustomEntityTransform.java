@@ -5,6 +5,7 @@ import com.loudsight.meta.MetaRepository;
 import com.loudsight.meta.serialization.EntityTransform;
 import com.loudsight.meta.serialization.EntityType;
 
+import com.loudsight.useful.helper.logging.LoggingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 public class CustomEntityTransform extends EntityTransform<Object> { 
-    private static final Logger logger = LoggerFactory.getLogger(CustomEntityTransform.class);
+    private static final LoggingHelper logger = LoggingHelper.wrap(CustomEntityTransform.class);
     
     private static final int MAX_SERIALIZATION_DEPTH = 100;
     
@@ -56,7 +57,7 @@ public class CustomEntityTransform extends EntityTransform<Object> {
                         System.identityHashCode(entity),
                         stack.size(),
                         safeToString(entity));
-                logger.error(errorMsg);
+                logger.logError(errorMsg);
                 throw new IllegalStateException(errorMsg);
             }
             
@@ -67,7 +68,7 @@ public class CustomEntityTransform extends EntityTransform<Object> {
                         MAX_SERIALIZATION_DEPTH,
                         entity.getClass().getName(),
                         safeToString(entity));
-                logger.error(errorMsg);
+                logger.logError(errorMsg);
                 throw new IllegalStateException(errorMsg);
             }
             
@@ -79,10 +80,8 @@ public class CustomEntityTransform extends EntityTransform<Object> {
                 throw new IllegalArgumentException("Unknown entity class: " + entity.getClass().getSimpleName());
             }
 
-            if (logger.isTraceEnabled()) {
-                logger.trace("Serializing entity: type={}, depth={}, stackSize={}", 
+                logger.logTrace("Serializing entity: type={}, depth={}, stackSize={}", 
                         meta.getTypeName(), depth, stack.size());
-            }
 
             bytes.add(EntityType.CUSTOM.getCode());
             writeStr(meta.getTypeName(), bytes);
@@ -95,11 +94,9 @@ public class CustomEntityTransform extends EntityTransform<Object> {
                 .map(it -> {
                     writeStr(it.name(), fieldBytes);
                     var fieldValue = it.get(entity);
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("  Serializing field: name={}, valueType={}", 
+                        logger.logTrace("  Serializing field: name={}, valueType={}", 
                                 it.name(), 
                                 fieldValue != null ? fieldValue.getClass().getSimpleName() : "null");
-                    }
                     serialize(fieldValue, fieldBytes);
                     return 0;
                 }).count();
@@ -136,7 +133,6 @@ public class CustomEntityTransform extends EntityTransform<Object> {
         }
         var fieldCount = readInt(bytes);
         var fieldMap = new HashMap<String, Object>();
-//        fieldMap["__className__"] = typeName
 
         for (int i  = 0; i  < fieldCount; i ++) {
             var fieldName = readStr(bytes);
