@@ -26,8 +26,24 @@ public class MetaRepository {
     private static <T> Meta<T> loadMeta(String someClassName) {
         try {
             String metaClassName = someClassName + "Meta";
-            Class<?> metaClass = Class.forName(metaClassName);
-            return ClassHelper.uncheckedCast(metaClass.getMethod("getInstance").invoke(null));
+            
+            // Load base class first to get its classloader
+            Class<?> baseClass = Class.forName(someClassName);
+            ClassLoader baseClassLoader = baseClass.getClassLoader();
+            
+            // Use base class classloader to load meta class
+            Class<?> metaClass = Class.forName(metaClassName, true, baseClassLoader);
+            
+            // Use base class classloader for reflection by setting it as context
+            ClassLoader originalContextClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(baseClassLoader);
+                var method = metaClass.getMethod("getInstance");
+                var result = method.invoke(null);
+                return ClassHelper.uncheckedCast(result);
+            } finally {
+                Thread.currentThread().setContextClassLoader(originalContextClassLoader);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
