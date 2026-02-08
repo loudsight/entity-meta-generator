@@ -1,7 +1,10 @@
 package com.loudsight.meta.serialization;
 
 import com.loudsight.useful.helper.ClassHelper;
+import com.loudsight.useful.helper.JvmClassHelper;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +24,8 @@ public class TypeConverters {
 
     {
         register(Integer.class, Long.class, from -> from != null ? from.intValue() : null);
+        register(Class.class, String.class, JvmClassHelper::classForName);
+        register(LocalDateTime.class, ZonedDateTime.class, LocalDateTime::from);
     }
 
     <T, F> void register(Class<T> to, Class<F> from, TypeConverter<T, F> converter) {
