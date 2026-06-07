@@ -32,14 +32,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration combine.self="override">
-                    <release>${java.version}</release>
-                    <annotationProcessorPaths />
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
