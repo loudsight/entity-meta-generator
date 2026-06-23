@@ -2,10 +2,17 @@ package com.loudsight.meta;
 
 import com.loudsight.useful.helper.ClassHelper;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MetaRepository {
@@ -71,6 +78,25 @@ public class MetaRepository {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public Set<String> getAllMeta() {
+        Set<String> allTypes = new HashSet<>();
+        
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("META-INF/introspect-types.index")) {
+            if (is != null) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        allTypes.add(line.trim());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // Index file not found or error reading - return empty set
+        }
+        
+        return allTypes;
     }
 
     public Map<String, ?> toMap(Object entity) {

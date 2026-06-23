@@ -1,6 +1,7 @@
 package com.loudsight.meta;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.loudsight.meta.entity.EntityConstructor;
@@ -70,6 +71,7 @@ public class EntityInstantiator {
             .toArray();
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T invoke(Collection<EntityConstructor> constructors,
                         Map<String, EntityField<T, ?>> fieldsMap,
                         Map<String, ?> paramsMap) {
@@ -80,24 +82,36 @@ public class EntityInstantiator {
             size = paramsMap.size();
         }
 
-        var c = constructors
-                .stream()
-                .filter(it -> !it.getEntityParameters().isEmpty() && paramsMap.keySet().containsAll(it.getEntityParameters().stream().map(EntityParameter::name).toList()))
-                .filter(it -> it.getEntityParameters().size() >= size)
-                .sorted((a, b) -> Integer.compare(b.getEntityParameters().size(), a.getEntityParameters().size()))
-                .toList();
+        // If paramsMap is empty, try no-arg constructor directly
+        if (size == 0) {
+            var c = constructors
+                    .stream()
+                    .filter(it -> it.getEntityParameters().isEmpty())
+                    .toList();
 
-        if (!c.isEmpty()) {
-            var it = c.get(0);
-            var parameters = getParameters(it, fieldsMap, paramsMap);
-            return it.newInstance(parameters);
+            if (!c.isEmpty()) {
+                return c.get(0).<T>newInstance();
+            }
+            throw new IllegalStateException("Cannot invoke any constructors with " + paramsMap);
         }
 
+        // Try exact match first
+        var c = findConstructors(constructors, paramsMap, size, true);
+        if (!c.isEmpty()) {
+            return instantiateWithConstructor(c.get(0), fieldsMap, paramsMap);
+        }
+
+        // Fallback: try constructors matching subset of parameters
+        c = findConstructors(constructors, paramsMap, size, false);
+        if (!c.isEmpty()) {
+            return instantiateWithConstructor(c.get(0), fieldsMap, paramsMap);
+        }
+
+        // Try no-arg constructor
         c = constructors
                 .stream()
                 .filter(it -> it.getEntityParameters().isEmpty())
                 .toList();
-//                .forEach(it -> {
 
         if (c.isEmpty()) {
             throw new IllegalStateException("Cannot invoke any constructors with " + paramsMap);
@@ -122,6 +136,45 @@ public class EntityInstantiator {
                     }
                     field.set(entity, convertedValue);
                 });
+        return entity;
+    }
+
+    private <T> void setExtraFields(T entity, EntityConstructor constructor,
+                                     Map<String, EntityField<T, ?>> fieldsMap,
+                                     Map<String, ?> paramsMap) {
+        paramsMap.entrySet().stream()
+                .filter(e -> fieldsMap.containsKey(e.getKey()) && fieldsMap.get(e.getKey()).setter() != null)
+                .filter(e -> !constructor.getEntityParameters().stream().map(EntityParameter::name).toList().contains(e.getKey()))
+                .forEach(e -> {
+                    var field = fieldsMap.get(e.getKey());
+                    Object convertedValue;
+                    if (field.isEnum() && e.getValue() instanceof String) {
+                        var meta = MetaRepository.getInstance().getMeta(field.typeClass());
+                        convertedValue = meta.newInstance(Map.of("name", e.getValue()));
+                    } else {
+                        convertedValue = TypeConverters.getInstance().convert(e.getValue(), field.typeClass());
+                    }
+                    field.set(entity, convertedValue);
+                });
+    }
+
+    private List<EntityConstructor> findConstructors(Collection<EntityConstructor> constructors,
+                                                      Map<String, ?> paramsMap, int size, boolean exactMatch) {
+        return constructors
+                .stream()
+                .filter(it -> !it.getEntityParameters().isEmpty() && paramsMap.keySet().containsAll(it.getEntityParameters().stream().map(EntityParameter::name).toList()))
+                .filter(it -> exactMatch ? it.getEntityParameters().size() >= size : it.getEntityParameters().size() < size)
+                .sorted((a, b) -> Integer.compare(b.getEntityParameters().size(), a.getEntityParameters().size()))
+                .toList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T instantiateWithConstructor(EntityConstructor constructor,
+                                              Map<String, EntityField<T, ?>> fieldsMap,
+                                              Map<String, ?> paramsMap) {
+        var parameters = getParameters(constructor, fieldsMap, paramsMap);
+        var entity = constructor.<T>newInstance(parameters);
+        setExtraFields(entity, constructor, fieldsMap, paramsMap);
         return entity;
     }
 

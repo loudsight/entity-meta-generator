@@ -140,6 +140,23 @@ public class CustomEntityTransform extends EntityTransform<Object> {
             fieldMap.put(fieldName, fieldValue);
         }
 
+        // If fieldMap is empty, use the smallest constructor with null values
+        if (fieldMap.isEmpty()) {
+            var constructors = meta.getConstructors();
+            if (constructors != null && !constructors.isEmpty()) {
+                // Find constructor with fewest parameters
+                var smallestConstructor = constructors.stream()
+                        .min((a, b) -> Integer.compare(a.getEntityParameters().size(), b.getEntityParameters().size()))
+                        .orElse(null);
+                if (smallestConstructor != null) {
+                    var paramCount = smallestConstructor.getEntityParameters().size();
+                    var params = new Object[paramCount];
+                    java.util.Arrays.fill(params, null);
+                    return smallestConstructor.newInstance(params);
+                }
+            }
+        }
+
         return meta.newInstance(fieldMap);
     }
 
