@@ -46,27 +46,8 @@ public class EntityInstantiator {
                 } else {
                     convertedValue = TypeConverters.getInstance().convert(fieldValue, field.typeClass());
                 }
-//
+
                 return convertedValue;
-//            } else {
-//                type = type.replace("<out ", "<")
-//                var e = EntityTransforms.getEntityType(it.parameterType.java, value)
-//                if (type.startsWith("kotlin.Array<")) {
-//                    value = helper.eval(type.replace("kotlin.Array", "arrayOf") + "()")
-//                    return@map value
-//                } else if (type.startsWith("kotlin.collections.List<")) {
-//                    var expr = type.replace("kotlin.collections.List", "arrayListOf") + "()"
-//                    expr = expr.replace("<T", "<*")
-//                    value = helper.eval(expr)
-//                    return@map value
-//                } else if (type.startsWith("kotlin.collections.Collection<")) {
-//                    var expr = type.replace("kotlin.collections.Collection", "arrayListOf") + "()"
-//                    expr = expr.replace("<T", "<*")
-//                    value = helper.eval(expr)
-//                    return@map value
-//                }
-//                return@map value
-//            }
             })
             .toArray();
     }
@@ -177,54 +158,4 @@ public class EntityInstantiator {
         setExtraFields(entity, constructor, fieldsMap, paramsMap);
         return entity;
     }
-
-    public void x() {
-
-//                var parameters = meta.constructors
-//                    .first { it.entityParameters.isNotEmpty() }CollectionEntityTransform
-//                    .entityParameters.map { parameter ->
-//                    var name = parameter.name
-//                    var entity = entityMap[name]
-//
-//                    if (entity is Map<*, *>) {
-//                        entity = fromXXX(Cast.uncheckedCast(entity))
-//                    } else if (entity is List<*>) {
-//                        entity = (entity as List<*>).map {
-//                            if (it is Map<*, *>) {
-//                                fromXXX(Cast.uncheckedCast(it))
-//                            } else {
-//                                it
-//                            }
-//                        }.toList()
-//                    }
-//                    var value = entity
-//                    if (value == null) {
-//                        parameter.nullValue
-//                    } else if (KClass::class.java.isAssignableFrom(parameter.parameterType.java)) {
-//                        if (value is String) {
-//                            Class.forName(value).kotlin
-//                        } else {
-//                            null
-//                        }
-//                    } else if (parameter.parameterType.java.isAssignableFrom(value.javaClass)) {
-//                        value
-//                    } else {
-//                        null
-//                    }
-
-    }
-
-//    private fun constructInstanceFromValue(value: Any?): Any? {
-//        if (value is List<*>) {
-//            return value.map { constructInstanceFromValue(it) }.toList()
-//        } else if (value is Map<*, *> && value.containsKey("__className__")) {
-//            var meta = helper.getMeta<Any>(JvmClassHelper.classForName<Any>(value["__className__"] as String))
-//
-//            if (meta.isPresent) {
-//                return meta.get().newInstance(ClassHelper.uncheckedCast(value))
-//            }
-//            // value = metaRepository.fromMap(value)
-//        }
-//        return value
-//    }
 }

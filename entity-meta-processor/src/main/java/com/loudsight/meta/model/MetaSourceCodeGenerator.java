@@ -441,7 +441,8 @@ public class MetaSourceCodeGenerator {
     }
 
     private String getSetterName(EntityVariableInfo info) {
-        return "set" + capitaliize(info.getName().replaceFirst("is", ""));
+        var name = info.getType().isBoolean() ? info.getName().replaceFirst("^is", "") : info.getName();
+        return "set" + capitaliize(name);
     }
 
     private String capitaliize(String input) {

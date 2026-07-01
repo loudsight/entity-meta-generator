@@ -303,14 +303,18 @@ public class MetaGeneratorService {
         //qualifiedName = getTypeName(qualifiedName)
         // var type = qualifiedName
         var classes = getClassHierarchy(typeElement);
+        var isCollection = typeElement != null && (
+                typeElement.getInterfaces().stream().anyMatch(it -> {
+                    return getQualifiedName((TypeElement) ((DeclaredType) it).asElement()).equals(Collection.class.getName());
+                }) ||
+                classes.stream().anyMatch(it -> getQualifiedName(it).equals(Collection.class.getName()))
+        );
         var metaEntityFieldInfo = new EntityVariableInfo(
                 fieldName,
                 type,
                 typeElement,
                 classes.stream().anyMatch(it -> getQualifiedName(it).equals(Enum.class.getName())),
-                typeElement != null && typeElement.getInterfaces().stream().anyMatch(it -> {
-                    return getQualifiedName((TypeElement) ((DeclaredType) it).asElement()).equals(Collection.class.getName());
-                }),
+                isCollection,
                 annotations
         );
         return metaEntityFieldInfo;

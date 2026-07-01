@@ -94,9 +94,6 @@ public class CustomEntityTransform extends EntityTransform<Object> {
                 .map(it -> {
                     writeStr(it.name(), fieldBytes);
                     var fieldValue = it.get(entity);
-                        logger.logTrace("  Serializing field: name={}, valueType={}", 
-                                it.name(), 
-                                fieldValue != null ? fieldValue.getClass().getSimpleName() : "null");
                     serialize(fieldValue, fieldBytes);
                     return 0;
                 }).count();
