@@ -83,6 +83,16 @@ public interface Meta<T> {
      * @return the field
      */
     EntityField<T, ?> getFieldByName(String name) ;
+
+    /**
+     * Gets all ID fields (fields annotated with @Id).
+     * @return collection of ID fields
+     */
+    default Collection<EntityField<T, ?>> getIdFields() {
+        return getFields().stream()
+                .filter(EntityField::isId)
+                .collect(java.util.stream.Collectors.toList());
+    }
     //
     // TODO: Implement getMethod when needed
     // fun getMethod(methodName: String): EntityMethod<T, ?> {
