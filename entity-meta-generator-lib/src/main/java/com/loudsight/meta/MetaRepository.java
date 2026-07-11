@@ -81,22 +81,7 @@ public class MetaRepository {
     }
 
     public Set<String> getAllMeta() {
-        Set<String> allTypes = new HashSet<>();
-        
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("META-INF/introspect-types.index")) {
-            if (is != null) {
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        allTypes.add(line.trim());
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // Index file not found or error reading - return empty set
-        }
-        
-        return allTypes;
+        return SchemaRepository.getInstance().readAllIntrospectTypeNames(getClass().getClassLoader());
     }
 
     public Map<String, ?> toMap(Object entity) {

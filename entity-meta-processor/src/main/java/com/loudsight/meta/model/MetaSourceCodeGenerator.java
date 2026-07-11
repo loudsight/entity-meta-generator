@@ -496,61 +496,21 @@ public class MetaSourceCodeGenerator {
                 .build();
         metaClassBuilder.addMethod(newInstanceMethod);
     }
-        void addClassHierarchy() {
-        var listType = ParameterizedTypeName.get(
-                    ClassName.get(List.class),
-                    ParameterizedTypeName.get(
-                            ClassName.get(Class.class),
-                            WildcardTypeName.subtypeOf(Object.class)
-                    )
-            );
-
-            var typesInHierarchy = metaInfo.typeHierarchy()
-                    .stream()
-                .filter(it -> it.getTypeName().contains(".") && !(it.getTypeName().startsWith("java") || it.getTypeName().startsWith("kotlin")))
-                    .map(this::entityVariableInfoToParameterizedTypeName)
-                    .map(it -> it.toString() + ".class")
-                .collect(Collectors.joining(", "));
-            var typeHierarchy = FieldSpec.builder(listType, "typeHierarchy")
-                    .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-                    .initializer(String.format("""
-                                List.of(
-                                %s
-                                )
-                            """.stripIndent(),
-                            typesInHierarchy)
-                    )
-//                PropertySpec.builder("typeHierarchy",
-//                    List::class.asTypeName().plusParameter(KClass::class.asTypeName().plusParameter(
-//                        WildcardTypeName.producerOf(Any::class.asTypeName())
-//                    )), KModifier.OVERRIDE)
-//                    .getter(
-//                        FunSpec.builder("get()").addStatement(
-//                            
-//                        ).build()
-//                    ).build())
-                .build();
-            metaClassBuilder.addField(typeHierarchy);
-//
-//        }
-    }
 
     private void addConstructor() {
         var constructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PRIVATE)
                 .addStatement(String.format("""
                                 super(
-                                "%s",
-                                            "${simpleTypeName}",
+                                %sSchema.getInstance(),
                                             ${simpleTypeName}.class,
                                             ${simpleTypeName}Meta._fields,
                                             ${simpleTypeName}Meta.constructors,
                                             ${simpleTypeName}Meta.annotations,
-                                            ${simpleTypeName}Meta.typeHierarchy,
                                             $T.emptyList()
                                 );
                                     """.replaceAll("\\$\\{simpleTypeName}", metaInfo.simpleTypeName()),
-                        metaInfo.getPackageName()
+                        metaInfo.simpleTypeName()
                 ), Collections.class).build();
         metaClassBuilder.addMethod(constructor);
     }
@@ -563,11 +523,6 @@ public class MetaSourceCodeGenerator {
         addAnnotations();
         addNewInstanceMethod();
         addConstructor();
-
-//        source.addClassDeclaration();
-//        source.addTypeFields();
-//        source.addMethods();
-        addClassHierarchy();
 
         return metaClassBuilder;
     }

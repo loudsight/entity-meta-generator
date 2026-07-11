@@ -90,6 +90,7 @@ public class CustomEntityTransform extends EntityTransform<Object> {
 
             var fieldCount = meta.getFields()
                     .stream()
+                .filter(it -> !it.isTransient())
                 .filter(it -> it.get(entity) != null)
                 .map(it -> {
                     writeStr(it.name(), fieldBytes);
@@ -126,7 +127,19 @@ public class CustomEntityTransform extends EntityTransform<Object> {
         var typeName = readStr(bytes);
         Meta<Object> meta = MetaRepository.getInstance().getMeta(typeName);
         if (meta == null) {
-            throw new IllegalArgumentException("Unknown entity type-name: " + typeName);
+            // Graceful degrade: return raw field map with __className__ key
+            // This occurs on persistence-server for business types not on classpath
+            var fieldCount = readInt(bytes);
+            var fieldMap = new HashMap<String, Object>();
+            fieldMap.put("__className__", typeName);
+
+            for (int i  = 0; i  < fieldCount; i ++) {
+                var fieldName = readStr(bytes);
+                var fieldValue = deserialize(bytes);
+                fieldMap.put(fieldName, fieldValue);
+            }
+
+            return fieldMap;
         }
         var fieldCount = readInt(bytes);
         var fieldMap = new HashMap<String, Object>();

@@ -49,6 +49,25 @@ public class EntityHelper {
     }
 
     /**
+     * Checks if a type name is a primitive type.
+     * <p>
+     * Compares by simple name (stripping any package prefix) rather than requiring an exact
+     * match against Class.getName(): generated SchemaField.typeName() values are not
+     * consistently fully-qualified ("java.lang.Long") or short ("Long") - the codegen source is
+     * javax.lang.model's TypeMirror.toString(), which varies by call site - so a strict
+     * getName() comparison silently never matches for whichever form isn't fully-qualified.
+     * @param typeName the type name to check
+     * @return true if the type name is a primitive type
+     */
+    public static boolean isPrimitive(String typeName) {
+        if (typeName == null) {
+            return false;
+        }
+        String simpleTypeName = typeName.contains(".") ? typeName.substring(typeName.lastIndexOf('.') + 1) : typeName;
+        return primitives.stream().anyMatch(c -> c.getSimpleName().equals(simpleTypeName));
+    }
+
+    /**
      * Gets the converters map.
      * @return the converters map
      */

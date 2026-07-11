@@ -6,6 +6,7 @@ import com.loudsight.meta.model.descriptors.ClassDescriptor;
 import com.loudsight.meta.model.descriptors.MethodDescriptor;
 import com.loudsight.meta.model.descriptors.TypeMapper;
 import com.loudsight.meta.writter.MetaClassWriter;
+import com.loudsight.meta.writter.SchemaClassWriter;
 import com.loudsight.meta.EntityMetaProcessor;
 import com.loudsight.meta.MetaInfo;
 import com.loudsight.meta.annotation.Introspect;
@@ -63,7 +64,7 @@ public final class IntrospectAnnotationProcessor
 
     @Override
     MetaInfo transformElementToModel(Element annotatedElement, Introspect annotation) {
-        String typeName = annotatedElement.asType().toString();
+        String typeName = ((TypeElement) annotatedElement).getQualifiedName().toString();
         introspectedTypes.add(typeName);
         
         ClassDescriptor classDescriptor = annotatedElement.accept(new TypeMapper(), null).getClassDescriptor();
@@ -87,6 +88,8 @@ public final class IntrospectAnnotationProcessor
         try {
             MetaClassWriter writer = new MetaClassWriter(this.processingEnv.getFiler());
             writer.generateMetaClass(model);
+            SchemaClassWriter schemaWriter = new SchemaClassWriter(this.processingEnv.getFiler());
+            schemaWriter.generateSchemaClass(model);
             EntityMetaProcessor entityMetaProcessor = new EntityMetaProcessor(
                     processingEnv.getTypeUtils(),
                     processingEnv.getElementUtils()

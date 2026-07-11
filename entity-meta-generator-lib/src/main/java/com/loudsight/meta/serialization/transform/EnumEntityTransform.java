@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class EnumEntityTransform extends EntityTransform<Enum<?>> {
+public class EnumEntityTransform extends EntityTransform<Object> {
 
     private static class EnumEntityTransformHolder {
         private static final EnumEntityTransform INSTANCE = new EnumEntityTransform();
@@ -18,23 +18,29 @@ public class EnumEntityTransform extends EntityTransform<Enum<?>> {
         return EnumEntityTransform.EnumEntityTransformHolder.INSTANCE;
     }
     private EnumEntityTransform() {
-        super(EntityType.ENUM, (Class<Enum<?>>)(Object)Enum.class);
+        super(EntityType.ENUM, Enum.class);
     }
 
 
-    @Override public void serializeEntity( Enum<?> entity, List<Byte> bytes) {
+    @Override public void serializeEntity( Object entity, List<Byte> bytes) {
         bytes.add(EntityType.ENUM.getCode());
 
         var meta = MetaRepository.getInstance().getMeta(entity.getClass());
 
         writeStr(meta.getTypeName(), bytes);
-        writeStr(entity.name(), bytes);
+        writeStr(((Enum<?>)entity).name(), bytes);
     }
 
-    @Override public Enum<?>  deserializeEntity(Iterator<Byte> bytes) {
+    @Override public Object  deserializeEntity(Iterator<Byte> bytes) {
         var typeName = readStr(bytes);
         var meta = MetaRepository.getInstance().<Enum<?>>getMeta(typeName);
         var enumName = readStr(bytes);
+
+        if (meta == null) {
+            // Graceful degrade: return bare enum-name String
+            // This occurs on persistence-server for business types not on classpath
+            return enumName;
+        }
 
         return meta.newInstance(Map.of("name", enumName));
     }

@@ -74,7 +74,15 @@ public enum EntityType {
     /**
      * DateTime type.
      */
-    DATETIME('q');
+    DATETIME('q'),
+    /**
+     * Class-free Schema type.
+     */
+    SCHEMA('r'),
+    /**
+     * Class-free SchemaField type.
+     */
+    SCHEMA_FIELD('s');
     /**
      * The byte code for this entity type.
      */

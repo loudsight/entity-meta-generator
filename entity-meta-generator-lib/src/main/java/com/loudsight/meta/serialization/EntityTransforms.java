@@ -31,6 +31,8 @@ public class EntityTransforms {
         register(SetEntityTransform.getInstance());
         register(MapEntityTransform.getInstance());
         register(TemporalEntityTransform.getInstance());
+        register(SchemaFieldEntityTransform.getInstance());
+        register(SchemaEntityTransform.getInstance());
         register(CustomEntityTransform.getInstance());
     }
 

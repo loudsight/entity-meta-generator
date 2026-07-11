@@ -134,7 +134,13 @@ public class MetaGeneratorService {
                 .stream()
                 .filter(it -> !isObject(it))
                 .filter(it -> !it.getQualifiedName().toString().equals(typeName))
-                .map(it -> new EntityTypeInfo(getTypeName(it.getQualifiedName().toString()), isObject, it.asType()))
+                // Class.forName (used by Meta.getTypeHierarchy() and MetaRepository) requires the
+                // JVM binary name ($-separated for nested classes), not the canonical name
+                // getQualifiedName() returns (dot-separated) - using the canonical name here
+                // silently drops any nested-class ancestor from the hierarchy, since
+                // Class.forName("pkg.Outer.Inner") throws ClassNotFoundException where
+                // Class.forName("pkg.Outer$Inner") would have succeeded.
+                .map(it -> new EntityTypeInfo(getTypeName(elementUtils.getBinaryName(it).toString()), isObject, it.asType()))
                 .toList();
         var isEnum = classHierarchy.stream().anyMatch(it -> getQualifiedName(it).equals(Enum.class.getName()));
         var isRecord = classHierarchy.stream().anyMatch(it -> getQualifiedName(it).equals(Record.class.getName()));

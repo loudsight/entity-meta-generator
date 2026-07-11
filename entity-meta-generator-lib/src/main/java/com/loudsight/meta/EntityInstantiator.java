@@ -40,9 +40,8 @@ public class EntityInstantiator {
                 }
 
                 Object convertedValue;
-                if (field.isEnum() && fieldValue instanceof String) {
-                    var meta = MetaRepository.getInstance().getMeta(field.typeClass());
-                            convertedValue = meta.newInstance(Map.of("name", fieldValue));
+                if (field.isEnum() && fieldValue instanceof String enumName) {
+                    convertedValue = convertEnumValue(field.typeClass(), enumName);
                 } else {
                     convertedValue = TypeConverters.getInstance().convert(fieldValue, field.typeClass());
                 }
@@ -109,9 +108,8 @@ public class EntityInstantiator {
                     var fieldValue = e.getValue();
                     var field = fieldsMap.get(fieldName);
                     Object convertedValue;
-                    if (field.isEnum() && fieldValue instanceof String) {
-                        var meta = MetaRepository.getInstance().getMeta(field.typeClass());
-                        convertedValue = meta.newInstance(Map.of("name", fieldValue));
+                    if (field.isEnum() && fieldValue instanceof String enumName) {
+                        convertedValue = convertEnumValue(field.typeClass(), enumName);
                     } else {
                         convertedValue = TypeConverters.getInstance().convert(fieldValue, field.typeClass());
                     }
@@ -129,14 +127,28 @@ public class EntityInstantiator {
                 .forEach(e -> {
                     var field = fieldsMap.get(e.getKey());
                     Object convertedValue;
-                    if (field.isEnum() && e.getValue() instanceof String) {
-                        var meta = MetaRepository.getInstance().getMeta(field.typeClass());
-                        convertedValue = meta.newInstance(Map.of("name", e.getValue()));
+                    if (field.isEnum() && e.getValue() instanceof String enumName) {
+                        convertedValue = convertEnumValue(field.typeClass(), enumName);
                     } else {
                         convertedValue = TypeConverters.getInstance().convert(e.getValue(), field.typeClass());
                     }
                     field.set(entity, convertedValue);
                 });
+    }
+
+    /**
+     * Converts a wire-degraded enum name String back to a real enum instance. Throws a clear,
+     * immediate exception if the enum type isn't resolvable on this JVM, rather than letting a
+     * NullPointerException surface later and further from the actual cause (or worse, silently
+     * dropping the field - setExtraFields only sets fields it successfully converts).
+     */
+    private Object convertEnumValue(Class<?> enumType, String enumName) {
+        var meta = MetaRepository.getInstance().getMeta(enumType);
+        if (meta == null) {
+            throw new IllegalStateException("Cannot resolve Meta for enum type " + enumType.getName()
+                    + " to convert value \"" + enumName + "\" - the enum type is not on this JVM's classpath");
+        }
+        return meta.newInstance(Map.of("name", enumName));
     }
 
     private List<EntityConstructor> findConstructors(Collection<EntityConstructor> constructors,

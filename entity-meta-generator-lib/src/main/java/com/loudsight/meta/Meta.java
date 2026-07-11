@@ -16,22 +16,34 @@ import com.loudsight.meta.entity.EntityMethod;
  */
 public interface Meta<T> {
     /**
+     * Gets the class-free Schema for this type.
+     * @return the Schema
+     */
+    Schema getSchema();
+
+    /**
      * Gets the fully qualified type name.
      * @return the type name
      */
-    String getTypeName();
+    default String getTypeName() {
+        return getSchema().typeName();
+    }
 
     /**
      * Gets the package name.
      * @return the package name
      */
-    String getPackageName();
+    default String getPackageName() {
+        return getSchema().packageName();
+    }
 
     /**
      * Gets the simple type name (without package).
      * @return the simple type name
      */
-    String getSimpleTypeName();
+    default String getSimpleTypeName() {
+        return getSchema().simpleTypeName();
+    }
 
     /**
      * Gets the type class.
@@ -73,16 +85,24 @@ public interface Meta<T> {
 
     /**
      * Gets fields as a map keyed by field name.
+     * <p>
+     * Deliberately abstract, not a default derived from getSchema(): DefaultMeta (the only
+     * implementor) already backs this with a precomputed TreeMap in O(1)/O(log n), and a prior
+     * Schema-derived default here was both O(n^2) (rebuilding Schema's field map, then linearly
+     * rescanning getFields() for every entry to translate SchemaField back to EntityField) and
+     * fed Collectors.toMap a possibly-null value on any name mismatch, which throws
+     * NullPointerException. Kept abstract so a future implementor is forced to provide its own
+     * efficient lookup rather than silently inheriting that landmine.
      * @return map of fields by name
      */
-    Map<String, EntityField<T, ?>> getFieldAsMap() ;
+    Map<String, EntityField<T, ?>> getFieldAsMap();
 
     /**
      * Gets a field by name.
      * @param name the field name
      * @return the field
      */
-    EntityField<T, ?> getFieldByName(String name) ;
+    EntityField<T, ?> getFieldByName(String name);
 
     /**
      * Gets all ID fields (fields annotated with @Id).
@@ -103,7 +123,18 @@ public interface Meta<T> {
      * Gets the type hierarchy.
      * @return list of classes in the hierarchy
      */
-    List<Class<?>> getTypeHierarchy();
+    default List<Class<?>> getTypeHierarchy() {
+        return getSchema().typeHierarchy().stream()
+                .map(typeName -> {
+                    try {
+                        return Class.forName(typeName);
+                    } catch (ClassNotFoundException e) {
+                        return null;
+                    }
+                })
+                .filter(c -> c != null)
+                .collect(java.util.stream.Collectors.toList());
+    }
 
     /**
      * Gets all methods of this type.

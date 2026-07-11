@@ -10,41 +10,38 @@ import java.util.stream.Collectors;
 
 public abstract class DefaultMeta<T> implements Meta<T> {
 
-    private final String typeName;
-    private final String packageName;
-    private final String simpleTypeName;
+    private final Schema schema;
     private final Class<T> typeClass;
     private final List<EntityConstructor> constructors;
     private final List<EntityAnnotation> annotations;
-    private final List<Class<?>> typeHierarchy;
     private final List<EntityMethod<T, ?>> methods;
 
     private final Map<String, EntityField<T, ?>> fieldMap;
 
 
     public DefaultMeta(
-            String packageName,
-            String simpleTypeName,
+            Schema schema,
             Class<T> typeClass,
             List<EntityField<T, ?>> fields,
             List<EntityConstructor> constructors,
             List<EntityAnnotation> annotations,
-            List<Class<?>> typeHierarchy,
             List<EntityMethod<T, ?>> methods
     ) {
-        this.typeName = packageName + "."+ simpleTypeName;
-        this.packageName = packageName;
-        this.simpleTypeName = simpleTypeName;
+        this.schema = schema;
         this.typeClass = typeClass;
         this.constructors = constructors;
         this.annotations = annotations;
-        this.typeHierarchy = typeHierarchy;
         this.methods = methods;
 
         var fieldMap = new TreeMap<String, EntityField<T, ?>>(String::compareTo);
         fields.forEach(it -> fieldMap.put(it.name(), it));
 
         this.fieldMap = Collections.unmodifiableMap(fieldMap);
+    }
+
+    @Override
+    public Schema getSchema() {
+        return schema;
     }
 
     //    private val methodMap: Map<String, EntityMethod<T, *>>
@@ -54,21 +51,6 @@ public abstract class DefaultMeta<T> implements Meta<T> {
 //
 //            return methods.associateBy({ obj: EntityMethod<T, *> -> obj.name }, { it })
 //        }
-
-    @Override
-    public String getTypeName() {
-        return typeName;
-    }
-
-    @Override
-    public String getPackageName() {
-        return packageName;
-    }
-
-    @Override
-    public String getSimpleTypeName() {
-        return simpleTypeName;
-    }
 
     @Override
     public Class<T> getTypeClass() {
@@ -118,11 +100,6 @@ public abstract class DefaultMeta<T> implements Meta<T> {
                             it -> it.getValue().get(entity)
                     )
             );
-    }
-
-    @Override
-    public List<Class<?>> getTypeHierarchy() {
-        return typeHierarchy;
     }
 
     @Override
