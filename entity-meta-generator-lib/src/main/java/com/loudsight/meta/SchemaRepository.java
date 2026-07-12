@@ -75,6 +75,36 @@ public class SchemaRepository {
     }
 
     /**
+     * Resolves every Cypher label a query for {@code typeName} must match to also pick up
+     * subclass instances (e.g. querying for {@code User} should also match a saved
+     * {@code AuthenticatedUser} node). Always includes {@code typeName} itself.
+     * <p>
+     * {@link Schema#typeHierarchy()} only ever lists a type's own <em>ancestors</em> - it's
+     * generated per-class at annotation-processing time from {@code TypeElement.getSuperclass()},
+     * so a class can never enumerate its own descendants that way (nothing on {@code User} can
+     * know about {@code AuthenticatedUser} at the point {@code User} is compiled). This instead
+     * walks every schema currently registered with this repository and keeps the ones whose own
+     * (ancestor) typeHierarchy names {@code typeName} - i.e. it finds descendants by checking, in
+     * the other direction, "does this other type list typeName as an ancestor?".
+     * <p>
+     * Only sees types that have actually been registered (self-registered from this JVM's own
+     * classpath, or pushed by a client via REGISTER_SCHEMA) - by design, since those are exactly
+     * the types that can actually appear as saved nodes.
+     * @param typeName the base type name being queried for
+     * @return typeName plus every currently-known subclass type name
+     */
+    public Set<String> getPolymorphicTypeNames(String typeName) {
+        Set<String> result = new HashSet<>();
+        result.add(typeName);
+        for (Schema schema : schemaByTypeName.values()) {
+            if (schema.typeHierarchy().contains(typeName)) {
+                result.add(schema.typeName());
+            }
+        }
+        return result;
+    }
+
+    /**
      * Reads all @Introspect type names from META-INF/introspect-types.index.
      * Uses getResources() (plural) to merge all JARs' index files, fixing the bug
      * where singular getResourceAsStream only returns the first matching resource.
