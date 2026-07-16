@@ -76,13 +76,13 @@ public class EntityInstantiator {
         }
 
         // Try exact match first
-        var c = findConstructors(constructors, paramsMap, size, true);
+        var c = findConstructors(constructors, fieldsMap, size, true);
         if (!c.isEmpty()) {
             return instantiateWithConstructor(c.get(0), fieldsMap, paramsMap);
         }
 
         // Fallback: try constructors matching subset of parameters
-        c = findConstructors(constructors, paramsMap, size, false);
+        c = findConstructors(constructors, fieldsMap, size, false);
         if (!c.isEmpty()) {
             return instantiateWithConstructor(c.get(0), fieldsMap, paramsMap);
         }
@@ -151,11 +151,22 @@ public class EntityInstantiator {
         return meta.newInstance(Map.of("name", enumName));
     }
 
+    /**
+     * Candidate constructors are filtered against the entity's known fields ({@code fieldsMap}),
+     * not against the data actually supplied for this instance ({@code paramsMap}). A
+     * constructor parameter with no corresponding value in {@code paramsMap} - e.g. a field that
+     * was legitimately {@code null} and so was never serialized/persisted as a key at all -
+     * still resolves correctly via {@link #getParameters}, which treats a missing entry the same
+     * as an explicit {@code null}. Requiring {@code paramsMap} to literally contain every
+     * parameter name (the previous behavior) meant a single null field on a record - which has
+     * only its canonical constructor and no no-arg fallback - made every candidate constructor
+     * fail this check, causing "Cannot invoke any constructors" for otherwise well-formed data.
+     */
     private List<EntityConstructor> findConstructors(Collection<EntityConstructor> constructors,
-                                                      Map<String, ?> paramsMap, int size, boolean exactMatch) {
+                                                      Map<String, ?> fieldsMap, int size, boolean exactMatch) {
         return constructors
                 .stream()
-                .filter(it -> !it.getEntityParameters().isEmpty() && paramsMap.keySet().containsAll(it.getEntityParameters().stream().map(EntityParameter::name).toList()))
+                .filter(it -> !it.getEntityParameters().isEmpty() && fieldsMap.keySet().containsAll(it.getEntityParameters().stream().map(EntityParameter::name).toList()))
                 .filter(it -> exactMatch ? it.getEntityParameters().size() >= size : it.getEntityParameters().size() < size)
                 .sorted((a, b) -> Integer.compare(b.getEntityParameters().size(), a.getEntityParameters().size()))
                 .toList();
