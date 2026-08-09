@@ -1,0 +1,5 @@
+Opts this module out of the entity-meta-processing profile in parent/pom.xml.
+
+The profile adds a provided-scope dependency on entity-meta-processor. This aggregator owns that
+artifact, so inheriting the dependency would make it depend on its own child. Activation does not
+inherit, so each module under here carries its own marker.

@@ -1,0 +1,5 @@
+Opts this module out of the entity-meta-processing profile in parent/pom.xml.
+
+This IS entity-meta-processor - the profile's dependency would be a self-reference. See commit
+e65bb5b "remove self-referential annotation processor in entity-meta-processor". It declares its own
+annotationProcessorPaths (auto-service) in pom.xml.

@@ -1,0 +1,5 @@
+Opts this module out of the entity-meta-processing profile in parent/pom.xml.
+
+entity-meta-processor depends on this module, so taking the profile's dependency on the processor
+would be a cycle. See commit ae3c52a "disable annotation processors in entity-meta-generator-lib to
+break circular dependency".
