@@ -26,9 +26,18 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration combine.self="override">
-          <release>${java.version}</release>
-          <annotationProcessorPaths>
+        <!--
+          Unlike its siblings this module genuinely needs entity-meta-processor on the processor
+          path - exercising the processor is the point of it - and it cannot inherit that from the
+          parent's entity-meta-processing profile, because .no-entity-meta here keeps the profile
+          off so the rest of this tree can bootstrap.
+
+          It must append rather than override. combine.self="override" on <configuration> discarded
+          the inherited compilerArgs and processor path together; keeping the -Xplugin argument
+          while dropping error_prone_core would fail the compile with "plug-in not found".
+        -->
+        <configuration>
+          <annotationProcessorPaths combine.children="append">
             <path>
               <groupId>com.loudsight.meta</groupId>
               <artifactId>entity-meta-processor</artifactId>

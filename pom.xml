@@ -59,14 +59,17 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration combine.self="override">
-                    <release>${java.version}</release>
-                    <annotationProcessorPaths />
-                </configuration>
-            </plugin>
+            <!--
+              The maven-compiler-plugin entry here used combine.self="override" with an empty
+              annotationProcessorPaths, to escape an entity-meta-processor path the parent once
+              applied unconditionally - this tree builds that processor and cannot be compiled by
+              it. That path is now behind the parent's entity-meta-processing profile, which this
+              module opts out of via .no-entity-meta, so the override suppressed nothing.
+
+              Overriding the whole <configuration> is what made it dangerous to keep: it discarded
+              the inherited compilerArgs as well, so Error Prone would have been silently absent
+              here while running everywhere else.
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>

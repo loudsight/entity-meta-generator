@@ -38,7 +38,13 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <annotationProcessorPaths>
+          <!--
+            combine.children="append" keeps error_prone_core, inherited from the parent, on the
+            processor path alongside auto-service. Maven's default is to replace the inherited list
+            outright, which left the inherited -Xplugin:ErrorProne argument pointing at a plugin
+            that was no longer on the path: "plug-in not found: ErrorProne".
+          -->
+          <annotationProcessorPaths combine.children="append">
             <path>
               <groupId>com.google.auto.service</groupId>
               <artifactId>auto-service</artifactId>
