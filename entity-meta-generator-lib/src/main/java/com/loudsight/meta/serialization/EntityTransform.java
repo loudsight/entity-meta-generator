@@ -60,14 +60,14 @@ public abstract class EntityTransform<T> {
      * @param entity the entity to serialize
      * @param bytes the list to write bytes to
      */
-    abstract public void serializeEntity(T entity, List<Byte> bytes);
+    public abstract void serializeEntity(T entity, List<Byte> bytes);
 
     /**
      * Deserializes an entity from an iterator of bytes.
      * @param bytes the iterator of bytes
      * @return the deserialized entity
      */
-    abstract public T deserializeEntity(Iterator<Byte> bytes);
+    public abstract T deserializeEntity(Iterator<Byte> bytes);
 
     /**
      * Writes a string to the byte list.
@@ -101,7 +101,10 @@ public abstract class EntityTransform<T> {
     protected long readLong(Iterator<Byte> bytes) {
         var value = 0L;
         for (int i = 0; i < 8; i++) {
-            value += (Long.valueOf(bytes.next()) & 0xff) << i * 8;
+            // The cast is load-bearing: without it the & 0xff promotes only to int, and the
+            // i = 4..7 iterations would shift an int by 32..56 bits, which Java evaluates modulo
+            // 32 and silently wraps. Long.valueOf() used to supply the width; (long) now does.
+            value += ((long) (bytes.next() & 0xff)) << i * 8;
         }
 
         return value;
@@ -126,7 +129,7 @@ public abstract class EntityTransform<T> {
     protected int readInt(Iterator<Byte> bytes) {
         var length = 0;
         for (int i  = 0; i  < 4; i ++) {
-            length += ((Integer.valueOf(bytes.next()) & 0xff) << i * 8);
+            length += ((bytes.next() & 0xff) << i * 8);
         }
         return length;
     }
@@ -327,7 +330,7 @@ public abstract class EntityTransform<T> {
      */
     private static class CountingIterator implements Iterator<Byte> {
         private final Iterator<Byte> delegate;
-        private int count = 0;
+        private int count;
         
         public CountingIterator(Iterator<Byte> delegate) {
             this.delegate = delegate;

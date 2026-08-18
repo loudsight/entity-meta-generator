@@ -49,6 +49,6 @@ public class TemporalEntityTransform extends EntityTransform<Temporal> {
         var millis = readLong(bytes);
         var nanos = readInt(bytes);
 
-        return LocalDateTime.ofEpochSecond(Double.valueOf((((double) millis))/1000.).longValue(), nanos, ZoneOffset.UTC);
+        return LocalDateTime.ofEpochSecond(Double.valueOf(millis / 1000.).longValue(), nanos, ZoneOffset.UTC);
     }
 }
