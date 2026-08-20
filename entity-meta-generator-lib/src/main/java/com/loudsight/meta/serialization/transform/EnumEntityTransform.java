@@ -8,9 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class EnumEntityTransform extends EntityTransform<Object> {
+public final class EnumEntityTransform extends EntityTransform<Object> {
 
-    private static class EnumEntityTransformHolder {
+    private static final class EnumEntityTransformHolder {
         private static final EnumEntityTransform INSTANCE = new EnumEntityTransform();
     }
     // global access point

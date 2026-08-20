@@ -1,13 +1,12 @@
 package com.loudsight.meta.serialization.transform;
 
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// All test cases live in the abstract NumberEntityTransformTest base class; PMD can't see
+// inherited @Test methods, so it misreads this concrete fixture as a test class with no test cases.
+@SuppressWarnings("PMD.TestClassWithoutTestCases")
 public class LongEntityTransformTest extends NumberEntityTransformTest<Long> {
 
     LongEntityTransformTest() {

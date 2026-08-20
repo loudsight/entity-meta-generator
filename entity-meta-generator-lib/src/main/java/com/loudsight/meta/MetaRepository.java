@@ -2,21 +2,15 @@ package com.loudsight.meta;
 
 import com.loudsight.useful.helper.ClassHelper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MetaRepository {
-    private static class MetaRepositoryHolder {
+    private static final class MetaRepositoryHolder {
         private static final MetaRepository INSTANCE = new MetaRepository();
     }
     public static MetaRepository getInstance() {
@@ -30,6 +24,10 @@ public class MetaRepository {
         return loadMeta(someClass.getName());
     }
 
+    // baseClassLoader deliberately comes from baseClass itself, not the context classloader:
+    // the generated <Type>Meta class must be loaded by the same classloader as <Type> so the
+    // two agree on class identity.
+    @SuppressWarnings("PMD.UseProperClassLoader")
     private static <T> Meta<T> loadMeta(String someClassName) {
         try {
             String metaClassName = someClassName + "Meta";
@@ -52,7 +50,7 @@ public class MetaRepository {
                 Thread.currentThread().setContextClassLoader(originalContextClassLoader);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -81,7 +79,7 @@ public class MetaRepository {
     }
 
     public Set<String> getAllMeta() {
-        return SchemaRepository.getInstance().readAllIntrospectTypeNames(getClass().getClassLoader());
+        return SchemaRepository.getInstance().readAllIntrospectTypeNames(Thread.currentThread().getContextClassLoader());
     }
 
     public Map<String, ?> toMap(Object entity) {
@@ -95,13 +93,12 @@ public class MetaRepository {
 //
         if (entity instanceof Collection<?> entities) {
             entityMap.put("values", entities.stream().filter(Objects::nonNull).map(this::toMap).toList());
-        } else {
+        }
 //            meta.fields.forEach {
 //                val value = it.getValue(entity)
 //                if (value != null) {
 //                    entityMap.put(it.name, value)
 //                }
-        }
         return entityMap;
     }
 }

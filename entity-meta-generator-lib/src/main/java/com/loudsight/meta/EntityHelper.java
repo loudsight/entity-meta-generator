@@ -11,7 +11,11 @@ import com.loudsight.useful.helper.logging.LoggingHelper;
 /**
  * Helper class for entity conversion and manipulation.
  */
-public class EntityHelper {
+public final class EntityHelper {
+
+    private EntityHelper() {
+    }
+
     //    companion object {
     private static final LoggingHelper logger = LoggingHelper.wrap(EntityHelper.class);
 

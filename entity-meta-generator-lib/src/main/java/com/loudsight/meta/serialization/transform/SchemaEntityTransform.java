@@ -15,9 +15,9 @@ import java.util.List;
  * core-type transforms (e.g. TemporalEntityTransform). This is required for schema registration
  * (PersistenceApiClient sends List&lt;Schema&gt; over Aeron) to work at all.
  */
-public class SchemaEntityTransform extends EntityTransform<Schema> {
+public final class SchemaEntityTransform extends EntityTransform<Schema> {
 
-    private static class SchemaEntityTransformHolder {
+    private static final class SchemaEntityTransformHolder {
         private static final SchemaEntityTransform INSTANCE = new SchemaEntityTransform();
     }
 
@@ -32,24 +32,24 @@ public class SchemaEntityTransform extends EntityTransform<Schema> {
     @Override
     public void serializeEntity(Schema entity, List<Byte> bytes) {
         bytes.add(EntityType.SCHEMA.getCode());
-        EntityTransform.serialize(entity.typeName(), bytes);
-        EntityTransform.serialize(entity.packageName(), bytes);
-        EntityTransform.serialize(entity.simpleTypeName(), bytes);
-        EntityTransform.serialize(entity.isEnum(), bytes);
-        EntityTransform.serialize(entity.isRecord(), bytes);
-        EntityTransform.serialize(entity.fields(), bytes);
-        EntityTransform.serialize(entity.typeHierarchy(), bytes);
+        serialize(entity.typeName(), bytes);
+        serialize(entity.packageName(), bytes);
+        serialize(entity.simpleTypeName(), bytes);
+        serialize(entity.isEnum(), bytes);
+        serialize(entity.isRecord(), bytes);
+        serialize(entity.fields(), bytes);
+        serialize(entity.typeHierarchy(), bytes);
     }
 
     @Override
     public Schema deserializeEntity(Iterator<Byte> bytes) {
-        String typeName = EntityTransform.deserialize(bytes);
-        String packageName = EntityTransform.deserialize(bytes);
-        String simpleTypeName = EntityTransform.deserialize(bytes);
-        Boolean isEnum = EntityTransform.deserialize(bytes);
-        Boolean isRecord = EntityTransform.deserialize(bytes);
-        List<SchemaField> fields = EntityTransform.deserialize(bytes);
-        List<String> typeHierarchy = EntityTransform.deserialize(bytes);
+        String typeName = deserialize(bytes);
+        String packageName = deserialize(bytes);
+        String simpleTypeName = deserialize(bytes);
+        Boolean isEnum = deserialize(bytes);
+        Boolean isRecord = deserialize(bytes);
+        List<SchemaField> fields = deserialize(bytes);
+        List<String> typeHierarchy = deserialize(bytes);
         return new Schema(typeName, packageName, simpleTypeName, isEnum, isRecord, fields, typeHierarchy);
     }
 }

@@ -6,8 +6,6 @@ import com.loudsight.meta.serialization.EntityTransform;
 import com.loudsight.meta.serialization.EntityType;
 
 import com.loudsight.useful.helper.logging.LoggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class CustomEntityTransform extends EntityTransform<Object> { 
+public final class CustomEntityTransform extends EntityTransform<Object> { 
     private static final LoggingHelper logger = LoggingHelper.wrap(CustomEntityTransform.class);
     
     private static final int MAX_SERIALIZATION_DEPTH = 100;
@@ -28,7 +26,7 @@ public class CustomEntityTransform extends EntityTransform<Object> {
     private static final ThreadLocal<Integer> SERIALIZATION_DEPTH = 
             ThreadLocal.withInitial(() -> 0);
 
-    private static class CustomEntityTransformHolder {
+    private static final class CustomEntityTransformHolder {
         private static final CustomEntityTransform INSTANCE = new CustomEntityTransform();
     }
     // global access point
@@ -151,23 +149,27 @@ public class CustomEntityTransform extends EntityTransform<Object> {
         }
 
         // If fieldMap is empty, use the smallest constructor with null values
-        if (fieldMap.isEmpty()) {
-            var constructors = meta.getConstructors();
-            if (constructors != null && !constructors.isEmpty()) {
-                // Find constructor with fewest parameters
-                var smallestConstructor = constructors.stream()
-                        .min((a, b) -> Integer.compare(a.getEntityParameters().size(), b.getEntityParameters().size()))
-                        .orElse(null);
-                if (smallestConstructor != null) {
-                    var paramCount = smallestConstructor.getEntityParameters().size();
-                    var params = new Object[paramCount];
-                    java.util.Arrays.fill(params, null);
-                    return smallestConstructor.newInstance(params);
-                }
-            }
+        if (!fieldMap.isEmpty()) {
+            return meta.newInstance(fieldMap);
         }
 
-        return meta.newInstance(fieldMap);
+        var constructors = meta.getConstructors();
+        if (constructors == null || constructors.isEmpty()) {
+            return meta.newInstance(fieldMap);
+        }
+
+        // Find constructor with fewest parameters
+        var smallestConstructor = constructors.stream()
+                .min((a, b) -> Integer.compare(a.getEntityParameters().size(), b.getEntityParameters().size()))
+                .orElse(null);
+        if (smallestConstructor == null) {
+            return meta.newInstance(fieldMap);
+        }
+
+        var paramCount = smallestConstructor.getEntityParameters().size();
+        var params = new Object[paramCount];
+        java.util.Arrays.fill(params, null);
+        return smallestConstructor.newInstance(params);
     }
 
 

@@ -47,9 +47,10 @@ public class EntityMetaProcessor {
 
             return metaGeneratorService.getMetaInfo(typeElement);
         }
-        throw new RuntimeException("jjjh ");
+        throw new IllegalStateException("@Introspect(clazz=...) did not throw MirroredTypeException as expected");
     }
 
     public void finalizeElementProcessing(MetaInfo model) {
+        // No finalization needed; overridable hook for subclasses.
     }
 }

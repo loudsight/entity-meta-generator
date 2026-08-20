@@ -15,7 +15,7 @@ public final class TypeMapper extends ElementKindVisitor8<TypeMapper, Void> {
     public TypeMapper visitTypeAsClass(TypeElement e, Void unused) {
         this.classDescriptor.setClassName(e.getSimpleName().toString());
         String qualifiedName = e.getQualifiedName().toString();
-        this.classDescriptor.setPackageName(qualifiedName.substring(0, qualifiedName.lastIndexOf(".")));
+        this.classDescriptor.setPackageName(qualifiedName.substring(0, qualifiedName.lastIndexOf('.')));
         for (Element element : e.getEnclosedElements()) {
             analyzeElement(element);
         }

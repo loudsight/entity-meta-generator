@@ -73,8 +73,9 @@ public final class BuilderAnnotatedClass {
         this.constructors.stream().filter(constructor ->
                 constructor.getArguments().isEmpty())
                 .findFirst()
-                .ifPresent(noArgsConstructorFound ->
-                        this.noArgsConstructor = noArgsConstructorFound);
+                .ifPresent(noArgsConstructorFound -> {
+                    this.noArgsConstructor = noArgsConstructorFound;
+                });
         return this;
     }
 

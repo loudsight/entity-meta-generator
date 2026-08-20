@@ -9,12 +9,12 @@ import com.loudsight.meta.serialization.EntityType;
 /**
  * EntityTransform implementation for Boolean types.
  */
-public class BooleanEntityTransform extends EntityTransform<Boolean> {
+public final class BooleanEntityTransform extends EntityTransform<Boolean> {
 
 /**
  * Holder for singleton instance.
  */
-private static class BooleanEntityTransformHolder {
+private static final class BooleanEntityTransformHolder {
     private static final BooleanEntityTransform INSTANCE = new BooleanEntityTransform();
 }
     /**

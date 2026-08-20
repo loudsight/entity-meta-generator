@@ -9,9 +9,9 @@ import com.loudsight.meta.entity.EntityField;
 import com.loudsight.meta.entity.EntityParameter;
 import com.loudsight.meta.serialization.TypeConverters;
 
-public class EntityInstantiator {
+public final class EntityInstantiator {
 
-    private static class EntityInstantiatorHolder {
+    private static final class EntityInstantiatorHolder {
         private static final EntityInstantiator INSTANCE = new EntityInstantiator();
     }
     // global access point

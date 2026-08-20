@@ -1,6 +1,7 @@
 package com.loudsight.meta;
 
 import com.loudsight.useful.helper.ClassHelper;
+import com.loudsight.useful.helper.logging.LoggingHelper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * Used by persistence-server to store schemas pushed by clients without touching the classpath.
  */
 public class SchemaRepository {
-    private static class SchemaRepositoryHolder {
+    private static final LoggingHelper logger = LoggingHelper.wrap(SchemaRepository.class);
+
+    private static final class SchemaRepositoryHolder {
         private static final SchemaRepository INSTANCE = new SchemaRepository();
     }
 
@@ -44,8 +47,12 @@ public class SchemaRepository {
      * (for JVMs that have the generated <X>Schema class, e.g. client-side).
      * @param typeName the type name
      * @return the schema
-     * @throws RuntimeException if schema is not registered and not on classpath
+     * @throws IllegalStateException if schema is not registered and not on classpath
      */
+    // baseClassLoader deliberately comes from baseClass itself, not the context classloader:
+    // the generated <Type>Schema class must be loaded by the same classloader as <Type> so the
+    // two agree on class identity.
+    @SuppressWarnings("PMD.UseProperClassLoader")
     public Schema getSchema(String typeName) {
         Schema schema = schemaByTypeName.get(typeName);
         if (schema != null) {
@@ -69,7 +76,7 @@ public class SchemaRepository {
                 Thread.currentThread().setContextClassLoader(originalContextClassLoader);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Schema not found for type: " + typeName + 
+            throw new IllegalStateException("Schema not found for type: " + typeName +
                 ". Schema must be registered via register() or available on classpath as " + typeName + "Schema", e);
         }
     }
@@ -120,14 +127,15 @@ public class SchemaRepository {
                 URL url = resources.nextElement();
                 try (InputStream is = url.openStream();
                      BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
+                    String line = reader.readLine();
+                    while (line != null) {
                         allTypes.add(line.trim());
+                        line = reader.readLine();
                     }
                 }
             }
         } catch (IOException e) {
-            // Index file not found or error reading - return empty set
+            logger.logDebug("Index file not found or error reading - returning empty set", e);
         }
 
         return allTypes;

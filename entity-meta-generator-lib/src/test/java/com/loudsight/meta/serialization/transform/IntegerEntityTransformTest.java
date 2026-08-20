@@ -2,6 +2,9 @@ package com.loudsight.meta.serialization.transform;
 
 import java.util.ArrayList;
 
+// All test cases live in the abstract NumberEntityTransformTest base class; PMD can't see
+// inherited @Test methods, so it misreads this concrete fixture as a test class with no test cases.
+@SuppressWarnings("PMD.TestClassWithoutTestCases")
 public class IntegerEntityTransformTest extends NumberEntityTransformTest<Integer> {
 
     IntegerEntityTransformTest() {

@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class ListEntityTransform extends CollectionEntityTransform<List<?>> {
+public final class ListEntityTransform extends CollectionEntityTransform<List<?>> {
 
-private static class ListEntityTransformHolder {
+private static final class ListEntityTransformHolder {
     private static final ListEntityTransform INSTANCE = new ListEntityTransform();
 }
     // global access point

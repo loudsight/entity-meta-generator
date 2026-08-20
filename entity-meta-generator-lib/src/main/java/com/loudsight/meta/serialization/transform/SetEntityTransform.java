@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-public class SetEntityTransform extends CollectionEntityTransform<Set<?>> {
+public final class SetEntityTransform extends CollectionEntityTransform<Set<?>> {
 
-    private static class SetEntityTransformHolder {
+    private static final class SetEntityTransformHolder {
         private static final SetEntityTransform INSTANCE = new SetEntityTransform();
     }
     // global access point

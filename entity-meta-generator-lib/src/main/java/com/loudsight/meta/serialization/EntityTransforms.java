@@ -6,19 +6,17 @@ import com.loudsight.meta.serialization.transform.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class EntityTransforms {
-        private static class EntityTransformsHolder {
+public final class EntityTransforms {
+        private static final class EntityTransformsHolder {
             private static final EntityTransforms INSTANCE = new EntityTransforms();
         }
         public static EntityTransforms getInstance() {
             return EntityTransformsHolder.INSTANCE;
         }
-        private EntityTransforms() {}
-
         private final Map<Class<?>, EntityTransform<?>> classToEntityType = new LinkedHashMap<>();
     private final Map<EntityType, EntityTransform<?>> entityTypeToEntityTransform = new LinkedHashMap<>();
 
-    {
+    private EntityTransforms() {
         register(ClassTypeTransform.getInstance());
         register(BooleanEntityTransform.getInstance());
         register(ByteEntityTransform.getInstance());
@@ -71,10 +69,8 @@ public class EntityTransforms {
         if (aClass.isArray()) {
             return EntityType.ARRAY;
         }
-        if (isSubclassOf(aClass, Map.class)) {
-            if (((Map<?, ?>)entity).containsKey("__className__")) {
-                return EntityType.CUSTOM;
-            }
+        if (isSubclassOf(aClass, Map.class) && ((Map<?, ?>)entity).containsKey("__className__")) {
+            return EntityType.CUSTOM;
         }
         var x = getEntityTransform(entity);
         if (x == null || x.entityType == EntityType.CUSTOM) {

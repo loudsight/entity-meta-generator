@@ -8,21 +8,19 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TypeConverters {
-    private static class TypeConvertersHolder {
+public final class TypeConverters {
+    private static final class TypeConvertersHolder {
         private static final TypeConverters INSTANCE = new TypeConverters();
     }
     // global access point
     public static TypeConverters getInstance() {
         return TypeConverters.TypeConvertersHolder.INSTANCE;
     }
-    private TypeConverters() {}
-
     private static final Map<Class<?>, Map<Class<Object>, TypeConverter<?, ?>>> converters = new HashMap<>();
 
     private final Map<Class<Object>, TypeConverter<?, ?>> NO_CONVERTERS = new HashMap<>();
 
-    {
+    private TypeConverters() {
         register(Integer.class, Long.class, from -> from != null ? from.intValue() : null);
         register(Class.class, String.class, JvmClassHelper::classForName);
         register(LocalDateTime.class, ZonedDateTime.class, LocalDateTime::from);

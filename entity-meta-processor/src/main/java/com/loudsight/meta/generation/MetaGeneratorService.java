@@ -173,8 +173,9 @@ public class MetaGeneratorService {
                                                 (TypeElement) method.getEnclosingElement(),
                                                 methodName
                                         );
-                                        if (declaringClassType == null)
+                                        if (declaringClassType == null) {
                                             return false;
+                                        }
                                         var declaringClass = getQualifiedName(declaringClassType);
                                         return !(declaringClass.startsWith("java.lang.") || declaringClass.startsWith("kotlin."));
                                     }
@@ -315,7 +316,7 @@ public class MetaGeneratorService {
                 }) ||
                 classes.stream().anyMatch(it -> getQualifiedName(it).equals(Collection.class.getName()))
         );
-        var metaEntityFieldInfo = new EntityVariableInfo(
+        return new EntityVariableInfo(
                 fieldName,
                 type,
                 typeElement,
@@ -323,7 +324,6 @@ public class MetaGeneratorService {
                 isCollection,
                 annotations
         );
-        return metaEntityFieldInfo;
     }
 
     private List<EntityAnnotationInfo> getAnnotations(Supplier<List<AnnotationMirror>> annotationSupplier) {
@@ -431,9 +431,11 @@ public class MetaGeneratorService {
         TypeElement retClass = null;
         if (theClass.getKind() == ElementKind.CLASS) {
             var superClass = theClass.getSuperclass();
-            if (superClass.getKind() != TypeKind.NONE) retClass = getDeclaringClassMethod(
-                    (TypeElement) ((DeclaredType) superClass).asElement(),
-                    methodName);
+            if (superClass.getKind() != TypeKind.NONE) {
+                retClass = getDeclaringClassMethod(
+                        (TypeElement) ((DeclaredType) superClass).asElement(),
+                        methodName);
+            }
         }
         if (retClass == null) {
             for (var interfaceType : theClass.getInterfaces()) {
@@ -455,15 +457,15 @@ public class MetaGeneratorService {
     private String getTypeName(String name) {
         var typeName = name;
         var pos = typeName.indexOf("java.util.");
-        if (pos == 0 && typeName.indexOf(".", pos + "java.util.".length()) == -1) {
+        if (pos == 0 && typeName.indexOf('.', pos + "java.util.".length()) == -1) {
             typeName = name.replace("java.util.", "");
         }
 
         pos = typeName.indexOf("java.lang.");
-        if (pos == 0 && typeName.indexOf(".", pos + "java.lang.".length()) == -1) {
+        if (pos == 0 && typeName.indexOf('.', pos + "java.lang.".length()) == -1) {
             typeName = name.replace("java.lang.", "");
         }
-        return switch (typeName.toUpperCase()) {
+        return switch (typeName.toUpperCase(Locale.ROOT)) {
             case "INT" -> "Integer";
             case "BOOLEAN" -> "Boolean";
             case "LONG" -> "Long";

@@ -48,35 +48,35 @@ public class MetaSourceCodeGenerator {
 //                Builder(MetaInfo meta) {
 //                    this.simpleTypeName = meta.getSimpleTypeName();
 //                    this.packageName = meta.getTypeName().substring(0, meta.getTypeName().lastIndexOf('.'));
-////                    this.generatedClassBuilder = FileSpec.builder(packageName, simpleTypeName);
-////                    this.typeSpec = TypeSpec.objectBuilder("${simpleTypeName}Meta");
-////                    this.typeClassName = new ClassName(packageName, simpleTypeName);
+//                    this.generatedClassBuilder = FileSpec.builder(packageName, simpleTypeName);
+//                    this.typeSpec = TypeSpec.objectBuilder("${simpleTypeName}Meta");
+//                    this.typeClassName = new ClassName(packageName, simpleTypeName);
 //                }
 
 
     //        void addTypeFields() {
-////            typeSpec.addProperty(
-////                PropertySpec.builder("typeName", String::class, KModifier.OVERRIDE)
-////                    .getter(
-////                        FunSpec.builder("get()").addStatement(
-////                            "return \"${packageName}.${simpleTypeName}\""
-////                        ).build()
-////                    ).build())
-////                .addProperty(
-////                    PropertySpec.builder("typeClass", KClass::class.asTypeName().parameterizedBy(typeClassName), KModifier.OVERRIDE)
-////                        .getter(
-////                            FunSpec.builder("get()").addStatement(
-////                                "return ${simpleTypeName}::class"
-////                            ).build()
-////                        ).build())
-////                .addProperty(
-////                    PropertySpec.builder("simpleTypeName", String::class, KModifier.OVERRIDE)
-////                        .getter(
-////                            FunSpec.builder("get()").addStatement(
-////                                "return \"$simpleTypeName\""
-////                            ).build()
-////                        ).build())
-////                .build()
+//            typeSpec.addProperty(
+//                PropertySpec.builder("typeName", String::class, KModifier.OVERRIDE)
+//                    .getter(
+//                        FunSpec.builder("get()").addStatement(
+//                            "return \"${packageName}.${simpleTypeName}\""
+//                        ).build()
+//                    ).build())
+//                .addProperty(
+//                    PropertySpec.builder("typeClass", KClass::class.asTypeName().parameterizedBy(typeClassName), KModifier.OVERRIDE)
+//                        .getter(
+//                            FunSpec.builder("get()").addStatement(
+//                                "return ${simpleTypeName}::class"
+//                            ).build()
+//                        ).build())
+//                .addProperty(
+//                    PropertySpec.builder("simpleTypeName", String::class, KModifier.OVERRIDE)
+//                        .getter(
+//                            FunSpec.builder("get()").addStatement(
+//                                "return \"$simpleTypeName\""
+//                            ).build()
+//                        ).build())
+//                .build()
 //        }
 //
     private void addConstructors() {
@@ -153,56 +153,56 @@ public class MetaSourceCodeGenerator {
 
         metaClassBuilder.addField(fieldsField);
 
-////            typeSpec.addProperty(
-////                PropertySpec.builder("annotations", List::class.asTypeName().plusParameter(EntityAnnotation::class.asTypeName()), KModifier.OVERRIDE)
-////                    .getter(
-////                        FunSpec.builder("get()").addStatement(
-////                            "return listOf()"
-////                        ).build()
-////                    ).build())
-////                .build()
+//            typeSpec.addProperty(
+//                PropertySpec.builder("annotations", List::class.asTypeName().plusParameter(EntityAnnotation::class.asTypeName()), KModifier.OVERRIDE)
+//                    .getter(
+//                        FunSpec.builder("get()").addStatement(
+//                            "return listOf()"
+//                        ).build()
+//                    ).build())
+//                .build()
     }
 
 //        void addMethods() {
-////            var methodsSource = MutableList(meta.methods.size)  { idx ->
-//////                var argsSource = mutableListOf<String>()
-//////                var paramsSource = mutableListOf<String>()
-//////                var method = meta.methods[idx]
-//////                method.parameters.forEachIndexed { i, p ->
-//////                    argsSource.add("params[$i] as ${p.type}")
-//////
-//////                    var type: String = getKClassFromType(p.type)
-//////
-//////                    paramsSource.add(
-//////                        "EntityParameter(\"${p.name}\", $type)"
-//////                    )
-//////                }
-//////                var returnType: String = getKClassFromType(method.returnType)
-//////
-//////                """
-//////                    |    EntityMethod("${method.name}",
-//////                    |        listOf(${paramsSource.joinToString(",")}),
-//////                    |        $returnType, listOf(), object : EntityMethod.Invoker<$simpleTypeName, ${method.returnType}> {
-//////                    |        override fun apply(instance: $simpleTypeName, vararg params: Any?): ${method.returnType}? {
-//////                    |            return instance.${method.name}(${argsSource.joinToString(",")})
-//////                    |        }
-//////                    |    })
-//////                    |""".trimMargin()
-////            }
-////
-////            typeSpec.addProperty(
-////                PropertySpec.builder("methods", List::class.asTypeName().plusParameter(EntityMethod::class.asTypeName().parameterizedBy(
-////                    typeClassName, WildcardTypeName.producerOf(Any::class))), KModifier.OVERRIDE)
-////                    .getter(
-////                        FunSpec.builder("get()").addStatement(
-////                            """
-////                                return listOf(
-////                                 /*${methodsSource.joinToString(",")}*/
-////                                )
-////                            """.trimIndent()
-////                        ).build()
-////                    ).build())
-////                .build()
+//            var methodsSource = MutableList(meta.methods.size)  { idx ->
+//                var argsSource = mutableListOf<String>()
+//                var paramsSource = mutableListOf<String>()
+//                var method = meta.methods[idx]
+//                method.parameters.forEachIndexed { i, p ->
+//                    argsSource.add("params[$i] as ${p.type}")
+//
+//                    var type: String = getKClassFromType(p.type)
+//
+//                    paramsSource.add(
+//                        "EntityParameter(\"${p.name}\", $type)"
+//                    )
+//                }
+//                var returnType: String = getKClassFromType(method.returnType)
+//
+//                """
+//                    |    EntityMethod("${method.name}",
+//                    |        listOf(${paramsSource.joinToString(",")}),
+//                    |        $returnType, listOf(), object : EntityMethod.Invoker<$simpleTypeName, ${method.returnType}> {
+//                    |        override fun apply(instance: $simpleTypeName, vararg params: Any?): ${method.returnType}? {
+//                    |            return instance.${method.name}(${argsSource.joinToString(",")})
+//                    |        }
+//                    |    })
+//                    |""".trimMargin()
+//            }
+//
+//            typeSpec.addProperty(
+//                PropertySpec.builder("methods", List::class.asTypeName().plusParameter(EntityMethod::class.asTypeName().parameterizedBy(
+//                    typeClassName, WildcardTypeName.producerOf(Any::class))), KModifier.OVERRIDE)
+//                    .getter(
+//                        FunSpec.builder("get()").addStatement(
+//                            """
+//                                return listOf(
+//                                 /*${methodsSource.joinToString(",")}*/
+//                                )
+//                            """.trimIndent()
+//                        ).build()
+//                    ).build())
+//                .build()
 //        }
 //
 //        private String getKClassFromType(EntityTypeInfo type) {
@@ -429,8 +429,8 @@ public class MetaSourceCodeGenerator {
                                         """.stripIndent(),
                                 info.getName(),
                                 info.getType().getTypeName(),
-                                String.valueOf(info.isEnum()).toLowerCase(),
-                                String.valueOf(info.isCollection()).toLowerCase(),
+                                String.valueOf(info.isEnum()).toLowerCase(Locale.ROOT),
+                                String.valueOf(info.isCollection()).toLowerCase(Locale.ROOT),
                                 annotations,
                                 metaInfo.isRecord()? info.getName() : getGetterName(info),
                                 setter),
@@ -451,7 +451,7 @@ public class MetaSourceCodeGenerator {
         }
 
         // Convert the first character to uppercase and concatenate it with the rest of the string
-        return input.substring(0, 1).toUpperCase() + input.substring(1);
+        return input.substring(0, 1).toUpperCase(Locale.ROOT) + input.substring(1);
 
     }
 

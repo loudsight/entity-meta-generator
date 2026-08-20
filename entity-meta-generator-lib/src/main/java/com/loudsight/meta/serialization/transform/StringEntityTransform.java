@@ -10,12 +10,12 @@ import com.loudsight.meta.serialization.EntityType;
 /**
  * EntityTransform implementation for String types.
  */
-public class StringEntityTransform extends EntityTransform<String> {
+public final class StringEntityTransform extends EntityTransform<String> {
 
     /**
      * Holder for singleton instance.
      */
-    private static class StringEntityTransformHolder {
+    private static final class StringEntityTransformHolder {
         private static final StringEntityTransform INSTANCE = new StringEntityTransform();
     }
     /**

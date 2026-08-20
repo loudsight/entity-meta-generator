@@ -9,12 +9,12 @@ import com.loudsight.meta.serialization.EntityType;
 /**
  * EntityTransform implementation for Byte types.
  */
-public class ByteEntityTransform extends EntityTransform<Byte> {
+public final class ByteEntityTransform extends EntityTransform<Byte> {
 
     /**
      * Holder for singleton instance.
      */
-    private static class ByteEntityTransformHolder {
+    private static final class ByteEntityTransformHolder {
         private static final ByteEntityTransform INSTANCE = new ByteEntityTransform();
     }
     /**

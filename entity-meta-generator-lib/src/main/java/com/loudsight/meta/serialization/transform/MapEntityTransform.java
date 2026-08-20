@@ -9,9 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MapEntityTransform extends EntityTransform<Map<?, ?>> {
+public final class MapEntityTransform extends EntityTransform<Map<?, ?>> {
 
-    private static class MapEntityTransformHolder {
+    private static final class MapEntityTransformHolder {
         private static final MapEntityTransform INSTANCE = new MapEntityTransform();
     }
     // global access point

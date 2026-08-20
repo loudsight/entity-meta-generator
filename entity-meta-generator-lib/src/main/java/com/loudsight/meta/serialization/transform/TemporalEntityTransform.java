@@ -9,9 +9,9 @@ import java.time.temporal.Temporal;
 import java.util.Iterator;
 import java.util.List;
 
-public class TemporalEntityTransform extends EntityTransform<Temporal> {
+public final class TemporalEntityTransform extends EntityTransform<Temporal> {
 
-    private static class TemporalEntityTransformHolder {
+    private static final class TemporalEntityTransformHolder {
         private static final TemporalEntityTransform INSTANCE = new TemporalEntityTransform();
     }
     // global access point
@@ -32,9 +32,9 @@ public class TemporalEntityTransform extends EntityTransform<Temporal> {
             // wall-clock reading and silently moves the instant by that offset.
             // A LocalDateTime carries no offset and is already a UTC instant by contract (see
             // TimeProvider), so stamping the zone on is correct there.
-            if (entity instanceof ZonedDateTime zdt)
+            if (entity instanceof ZonedDateTime zdt) {
                 dt = zdt.withZoneSameInstant(ZoneOffset.UTC);
-            else{
+            } else {
                 dt = ((LocalDateTime)entity).atZone(
                         ZoneOffset.UTC
                 );

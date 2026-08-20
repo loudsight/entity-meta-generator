@@ -13,9 +13,9 @@ import java.util.List;
  * annotation processor), so it is wire-serialized directly here, alongside the other hand-written
  * core-type transforms (e.g. TemporalEntityTransform).
  */
-public class SchemaFieldEntityTransform extends EntityTransform<SchemaField> {
+public final class SchemaFieldEntityTransform extends EntityTransform<SchemaField> {
 
-    private static class SchemaFieldEntityTransformHolder {
+    private static final class SchemaFieldEntityTransformHolder {
         private static final SchemaFieldEntityTransform INSTANCE = new SchemaFieldEntityTransform();
     }
 
@@ -30,22 +30,22 @@ public class SchemaFieldEntityTransform extends EntityTransform<SchemaField> {
     @Override
     public void serializeEntity(SchemaField entity, List<Byte> bytes) {
         bytes.add(EntityType.SCHEMA_FIELD.getCode());
-        EntityTransform.serialize(entity.name(), bytes);
-        EntityTransform.serialize(entity.typeName(), bytes);
-        EntityTransform.serialize(entity.isEnum(), bytes);
-        EntityTransform.serialize(entity.isCollection(), bytes);
-        EntityTransform.serialize(entity.isId(), bytes);
-        EntityTransform.serialize(entity.isTransient(), bytes);
+        serialize(entity.name(), bytes);
+        serialize(entity.typeName(), bytes);
+        serialize(entity.isEnum(), bytes);
+        serialize(entity.isCollection(), bytes);
+        serialize(entity.isId(), bytes);
+        serialize(entity.isTransient(), bytes);
     }
 
     @Override
     public SchemaField deserializeEntity(Iterator<Byte> bytes) {
-        String name = EntityTransform.deserialize(bytes);
-        String typeName = EntityTransform.deserialize(bytes);
-        Boolean isEnum = EntityTransform.deserialize(bytes);
-        Boolean isCollection = EntityTransform.deserialize(bytes);
-        Boolean isId = EntityTransform.deserialize(bytes);
-        Boolean isTransient = EntityTransform.deserialize(bytes);
+        String name = deserialize(bytes);
+        String typeName = deserialize(bytes);
+        Boolean isEnum = deserialize(bytes);
+        Boolean isCollection = deserialize(bytes);
+        Boolean isId = deserialize(bytes);
+        Boolean isTransient = deserialize(bytes);
         return new SchemaField(name, typeName, isEnum, isCollection, isId, isTransient);
     }
 }

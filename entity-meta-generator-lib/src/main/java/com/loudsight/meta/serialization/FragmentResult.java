@@ -4,7 +4,7 @@ package com.loudsight.meta.serialization;
  * Result of fragment-based deserialization.
  * @param <T> the type of the deserialized entity
  */
-public class FragmentResult<T> {
+public final class FragmentResult<T> {
     
     /**
      * Status of the fragment deserialization.

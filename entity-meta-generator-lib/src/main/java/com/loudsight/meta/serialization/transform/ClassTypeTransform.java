@@ -6,9 +6,9 @@ import com.loudsight.meta.serialization.EntityType;
 import java.util.Iterator;
 import java.util.List;
 
-public class ClassTypeTransform extends EntityTransform<Class<?>> {
+public final class ClassTypeTransform extends EntityTransform<Class<?>> {
 
-private static class ClassTypeTransformHolder {
+private static final class ClassTypeTransformHolder {
     private static final ClassTypeTransform INSTANCE = new ClassTypeTransform();
 }
     // global access point
@@ -30,7 +30,7 @@ private static class ClassTypeTransformHolder {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }

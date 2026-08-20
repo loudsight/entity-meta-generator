@@ -6,9 +6,9 @@ import com.loudsight.meta.serialization.EntityType;
 import java.util.Iterator;
 import java.util.List;
 
-public class LongEntityTransform extends EntityTransform<Long> {
+public final class LongEntityTransform extends EntityTransform<Long> {
 
-    private static class LongEntityTransformHolder {
+    private static final class LongEntityTransformHolder {
         private static final LongEntityTransform INSTANCE = new LongEntityTransform();
     }
     // global access point

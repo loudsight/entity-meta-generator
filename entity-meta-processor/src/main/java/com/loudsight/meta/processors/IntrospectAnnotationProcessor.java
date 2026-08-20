@@ -24,7 +24,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -72,7 +71,7 @@ public final class IntrospectAnnotationProcessor
         for (AttributeDescriptor attribute : classDescriptor.getAttributes()) {
             Optional<MethodDescriptor> setter = classDescriptor.getMethods().stream()
                     .filter(method ->
-                    method.getName().toLowerCase().equals(String.format("set%s",attribute.name().toLowerCase())))
+                    method.getName().equalsIgnoreCase(String.format("set%s", attribute.name())))
                     .findFirst();
             attributeSetterMapping.put(attribute, setter);
         }

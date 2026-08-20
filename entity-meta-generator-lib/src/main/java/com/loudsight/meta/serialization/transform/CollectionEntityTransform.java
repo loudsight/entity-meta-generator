@@ -24,7 +24,7 @@ public abstract class CollectionEntityTransform<T extends Collection<?>> extends
             if (it == null) {
                 bytes.add(EntityType.NULL.getCode());
             } else {
-                EntityTransform.serialize(it, bytes);
+                serialize(it, bytes);
             }
         });
     }
