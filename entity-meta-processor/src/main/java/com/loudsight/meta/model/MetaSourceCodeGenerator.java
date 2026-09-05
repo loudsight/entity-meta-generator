@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.Locale;
 
 public class MetaSourceCodeGenerator {
     //    private static final LoggingHelper LOGGER = LoggingHelper.wrap(ApiScanner.class);
@@ -92,7 +93,7 @@ public class MetaSourceCodeGenerator {
                 var constructorParameter = constructorParameterInfo.get(i);
                 String parameterTypeName = constructorParameter.getType().getTypeName();
                 String entityParameter = CodeBlock.builder().addStatement(
-                        String.format("new $T(\"%s\", %s.class, $T.of())",
+                        String.format(Locale.ROOT, "new $T(\"%s\", %s.class, $T.of())",
                                 constructorParameter.getName(),
                                 parameterTypeName
                         ),
@@ -100,10 +101,10 @@ public class MetaSourceCodeGenerator {
                         List.class
                 ).build().toString().replace(";", "").trim();
                 constructorParameters.add(entityParameter);
-                var statement = String.format("(%s)args[%d]", parameterTypeName, i);
+                var statement = String.format(Locale.ROOT, "(%s)args[%d]", parameterTypeName, i);
                 constructorArgsCode.add(statement);
             });
-            String constructorStr = String.format("""
+            String constructorStr = String.format(Locale.ROOT, """
                                     new $T(
                                         $T.of(%s),
                                         args -> new $T(%s)
@@ -236,7 +237,7 @@ public class MetaSourceCodeGenerator {
 
         FieldSpec fieldsField = FieldSpec.builder(listType, "_fields")
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-                .initializer(String.format("java.util.List.of(%s)", fieldList
+                .initializer(String.format(Locale.ROOT, "java.util.List.of(%s)", fieldList
                         )
                 )
                 .build();
@@ -382,8 +383,7 @@ public class MetaSourceCodeGenerator {
     private String generateEntityAnnotations(Collection<EntityAnnotationInfo> annotations) {
         return annotations.stream().map(entityAnnotation -> {
                     return CodeBlock.builder().addStatement(
-                            String.format(
-                                    """
+                            String.format(Locale.ROOT, """
                                       new $T(
                                         "%s"
                                         // todo - process value
@@ -408,14 +408,13 @@ public class MetaSourceCodeGenerator {
         String setterName = metaInfo.isRecord()? info.getName() : getSetterName(info);
 
         if (!metaInfo.isRecord() && methodMap.containsKey(setterName)) {
-            setter = String.format("(entity, value) -> { entity.%s(value); }", setterName);
+            setter = String.format(Locale.ROOT, "(entity, value) -> { entity.%s(value); }", setterName);
         }
 
         return FieldSpec.builder(fieldType, info.getName())
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
                 .initializer(
-                        String.format(
-                                """
+                        String.format(Locale.ROOT, """
                                                     new $T(
                                                         "%s",
                                                         (Class<$T>)(Object)%s.class,
@@ -472,8 +471,7 @@ public class MetaSourceCodeGenerator {
         String constructorStatement;
 
         if (metaInfo.isEnum()) {
-            constructorStatement = String.format(
-                    "return %s.valueOf((String)fieldMap.get(\"name\"))",
+            constructorStatement = String.format(Locale.ROOT, "return %s.valueOf((String)fieldMap.get(\"name\"))",
                     metaInfo.simpleTypeName()
             );
         } else {
@@ -500,7 +498,7 @@ public class MetaSourceCodeGenerator {
     private void addConstructor() {
         var constructor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PRIVATE)
-                .addStatement(String.format("""
+                .addStatement(String.format(Locale.ROOT, """
                                 super(
                                 %sSchema.getInstance(),
                                             ${simpleTypeName}.class,

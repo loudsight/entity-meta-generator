@@ -3,6 +3,7 @@ package com.loudsight.meta.entity;
 import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Locale;
 
 public class GenericEntityTypeInfo extends EntityTypeInfo {
 
@@ -16,7 +17,7 @@ public class GenericEntityTypeInfo extends EntityTypeInfo {
         var genericArgumentsStr =
 
                 genericArguments.stream().map(EntityTypeInfo::toString).collect(Collectors.joining(", "));
-        str = String.format("%s<%s>", typeName, genericArgumentsStr);
+        str = String.format(Locale.ROOT, "%s<%s>", typeName, genericArgumentsStr);
     }
 
 

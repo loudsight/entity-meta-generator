@@ -14,6 +14,7 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Locale;
 
 public final class CustomEntityTransform extends EntityTransform<Object> { 
     private static final LoggingHelper logger = LoggingHelper.wrap(CustomEntityTransform.class);
@@ -48,8 +49,7 @@ public final class CustomEntityTransform extends EntityTransform<Object> {
         
         try {
             if (stack.contains(entity)) {
-                String errorMsg = String.format(
-                        "Circular reference detected while serializing %s (identity=%d). " +
+                String errorMsg = String.format(Locale.ROOT, "Circular reference detected while serializing %s (identity=%d). " +
                         "Serialization stack contains %d objects. Entity: %s",
                         entity.getClass().getName(),
                         System.identityHashCode(entity),
@@ -60,8 +60,7 @@ public final class CustomEntityTransform extends EntityTransform<Object> {
             }
             
             if (depth > MAX_SERIALIZATION_DEPTH) {
-                String errorMsg = String.format(
-                        "Max serialization depth (%d) exceeded while serializing %s. " +
+                String errorMsg = String.format(Locale.ROOT, "Max serialization depth (%d) exceeded while serializing %s. " +
                         "This may indicate a circular reference or deeply nested structure. Entity: %s",
                         MAX_SERIALIZATION_DEPTH,
                         entity.getClass().getName(),

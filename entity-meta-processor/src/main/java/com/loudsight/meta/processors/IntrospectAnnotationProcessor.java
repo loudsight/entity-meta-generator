@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Locale;
 
 @SupportedAnnotationTypes("com.loudsight.meta.annotation.Introspect")
 @SupportedSourceVersion(SourceVersion.RELEASE_25)
@@ -71,7 +72,7 @@ public final class IntrospectAnnotationProcessor
         for (AttributeDescriptor attribute : classDescriptor.getAttributes()) {
             Optional<MethodDescriptor> setter = classDescriptor.getMethods().stream()
                     .filter(method ->
-                    method.getName().equalsIgnoreCase(String.format("set%s", attribute.name())))
+                    method.getName().equalsIgnoreCase(String.format(Locale.ROOT, "set%s", attribute.name())))
                     .findFirst();
             attributeSetterMapping.put(attribute, setter);
         }

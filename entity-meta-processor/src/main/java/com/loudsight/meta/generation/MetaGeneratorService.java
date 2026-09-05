@@ -13,6 +13,7 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.SimpleTypeVisitor14;
 import javax.lang.model.util.Types;
+import java.util.Locale;
 
 public class MetaGeneratorService {
 
