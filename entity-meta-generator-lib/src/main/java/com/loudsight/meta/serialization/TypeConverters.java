@@ -42,7 +42,7 @@ public final class TypeConverters {
         return (T)toConverter.convert(ClassHelper.uncheckedCast(from));
     }
 
-    class NoOpConverter implements TypeConverter<Object, Object> {
+    static class NoOpConverter implements TypeConverter<Object, Object> {
         @Override
         public Object convert(Object from) {
             return from;

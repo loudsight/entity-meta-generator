@@ -5,9 +5,6 @@ import java.util.List;
 
 public final class ClassDescriptor {
 
-    private static final String TO_STRING_FORMAT =
-            "class %s%s: constructors: %s, attributes: %s, methods: %s";
-
     private String className;
     private String packageName;
     private final List<ConstructorDescriptor> constructors;
@@ -67,7 +64,7 @@ public final class ClassDescriptor {
 
     @Override
     public String toString() {
-        return String.format(TO_STRING_FORMAT,
+        return String.format("class %s%s: constructors: %s, attributes: %s, methods: %s",
                 this.packageName,
                 this.className,
                 this.constructors,

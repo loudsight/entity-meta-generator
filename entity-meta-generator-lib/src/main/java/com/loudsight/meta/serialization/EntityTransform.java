@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.loudsight.useful.helper.ClassHelper;
 import com.loudsight.useful.helper.logging.LoggingHelper;
 import org.agrona.DirectBuffer;
 
@@ -104,7 +105,7 @@ public abstract class EntityTransform<T> {
             // The cast is load-bearing: without it the & 0xff promotes only to int, and the
             // i = 4..7 iterations would shift an int by 32..56 bits, which Java evaluates modulo
             // 32 and silently wraps. Long.valueOf() used to supply the width; (long) now does.
-            value += ((long) (bytes.next() & 0xff)) << i * 8;
+            value += ((long) (bytes.next() & 0xff)) << (i * 8);
         }
 
         return value;
@@ -117,7 +118,7 @@ public abstract class EntityTransform<T> {
      */
     protected void writeInt(int length, List<Byte> bytes) {
         for (int i = 0; i < 4; i++) {
-            bytes.add(Integer.valueOf((length >> i * 8) & 0xFF).byteValue());
+            bytes.add(Integer.valueOf((length >> (i * 8)) & 0xFF).byteValue());
         }
     }
 
@@ -129,7 +130,7 @@ public abstract class EntityTransform<T> {
     protected int readInt(Iterator<Byte> bytes) {
         var length = 0;
         for (int i  = 0; i  < 4; i ++) {
-            length += ((bytes.next() & 0xff) << i * 8);
+            length += ((bytes.next() & 0xff) << (i * 8));
         }
         return length;
     }
@@ -202,11 +203,15 @@ public abstract class EntityTransform<T> {
             }
         }
 
+        // The <T> T shape on the four deserialize overloads below is this serializer's call
+        // convention - the caller's assignment target picks the type - so the type parameter
+        // deliberately appears only in the return type.
         /**
          * Deserializes an entity from a byte array.
          * @param bytes the byte array
          * @return the deserialized entity
          */
+        @SuppressWarnings("TypeParameterUnusedInFormals")
         public static <T> T deserialize(byte[] bytes) {
             return deserialize(bytes, 0, bytes.length);
         }
@@ -218,14 +223,11 @@ public abstract class EntityTransform<T> {
          * @param length the length in bytes
          * @return the deserialized entity
          */
+        @SuppressWarnings("TypeParameterUnusedInFormals")
         public static <T> T deserialize(DirectBuffer buffer, int offset, int length) {
             var byteIterator = new Iterator<Byte>() {
                 int index = offset;
                 final int endIndex = offset + length;
-
-                public int getPosition() {
-                    return index - offset; // Position relative to data start
-                }
 
                 @Override
                 public boolean hasNext() {
@@ -259,6 +261,7 @@ public abstract class EntityTransform<T> {
          * @param length the length
          * @return the deserialized entity
          */
+        @SuppressWarnings("TypeParameterUnusedInFormals")
         public static <T> T deserialize(byte[] bytes, int offset, int length) {
             var byteIterator = new Iterator<Byte>() {
                 int index = offset;
@@ -284,11 +287,12 @@ public abstract class EntityTransform<T> {
      * @param bytes the byte iterator
      * @return the deserialized entity
      */
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     public static <T> T deserialize(Iterator<Byte> bytes) {
             var entityType = EntityType.getEntityType(bytes.next());
             var entityTransform = EntityTransforms.getInstance().getEntityTransform(entityType);
 
-            return (T)entityTransform.deserializeEntity(bytes);
+            return ClassHelper.uncheckedCast(entityTransform.deserializeEntity(bytes));
         }
     
     /**
@@ -332,7 +336,7 @@ public abstract class EntityTransform<T> {
         private final Iterator<Byte> delegate;
         private int count;
         
-        public CountingIterator(Iterator<Byte> delegate) {
+        CountingIterator(Iterator<Byte> delegate) {
             this.delegate = delegate;
         }
         
@@ -351,7 +355,7 @@ public abstract class EntityTransform<T> {
             return b;
         }
         
-        public int getCount() {
+        int getCount() {
             return count;
         }
     }

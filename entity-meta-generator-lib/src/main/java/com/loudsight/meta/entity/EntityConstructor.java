@@ -1,5 +1,7 @@
 package com.loudsight.meta.entity;
 
+import com.loudsight.useful.helper.ClassHelper;
+
 import java.util.List;
 import java.util.function.Function;
 
@@ -31,8 +33,9 @@ public class EntityConstructor {
      * @param parameters the constructor parameters
      * @return the new instance
      */
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     public <T> T newInstance(Object... parameters) {
-        return (T)constructor.apply(parameters);
+        return ClassHelper.uncheckedCast(constructor.apply(parameters));
     }
 
     /**

@@ -418,8 +418,8 @@ public class MetaGeneratorService {
 
         var typeElement = aClass.getSuperclass();
 
-        if (typeElement instanceof DeclaredType) {
-            classes.addAll(getClassHierarchy((TypeElement) ((DeclaredType) typeElement).asElement()));
+        if (typeElement instanceof DeclaredType declaredType) {
+            classes.addAll(getClassHierarchy((TypeElement) declaredType.asElement()));
         }
         aClass.getInterfaces().forEach(it -> {
             classes.addAll(getClassHierarchy((TypeElement) ((DeclaredType) it).asElement()));

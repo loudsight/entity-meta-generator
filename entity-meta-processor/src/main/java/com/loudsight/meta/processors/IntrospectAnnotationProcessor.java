@@ -1,10 +1,6 @@
 package com.loudsight.meta.processors;
 
 import com.loudsight.meta.exceptions.ClassGenerationException;
-import com.loudsight.meta.model.descriptors.AttributeDescriptor;
-import com.loudsight.meta.model.descriptors.ClassDescriptor;
-import com.loudsight.meta.model.descriptors.MethodDescriptor;
-import com.loudsight.meta.model.descriptors.TypeMapper;
 import com.loudsight.meta.writter.MetaClassWriter;
 import com.loudsight.meta.writter.SchemaClassWriter;
 import com.loudsight.meta.EntityMetaProcessor;
@@ -24,12 +20,8 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Locale;
 
 @SupportedAnnotationTypes("com.loudsight.meta.annotation.Introspect")
 @SupportedSourceVersion(SourceVersion.RELEASE_25)
@@ -66,16 +58,7 @@ public final class IntrospectAnnotationProcessor
     MetaInfo transformElementToModel(Element annotatedElement, Introspect annotation) {
         String typeName = ((TypeElement) annotatedElement).getQualifiedName().toString();
         introspectedTypes.add(typeName);
-        
-        ClassDescriptor classDescriptor = annotatedElement.accept(new TypeMapper(), null).getClassDescriptor();
-        Map<AttributeDescriptor, Optional<MethodDescriptor>> attributeSetterMapping = new HashMap<>();
-        for (AttributeDescriptor attribute : classDescriptor.getAttributes()) {
-            Optional<MethodDescriptor> setter = classDescriptor.getMethods().stream()
-                    .filter(method ->
-                    method.getName().equalsIgnoreCase(String.format(Locale.ROOT, "set%s", attribute.name())))
-                    .findFirst();
-            attributeSetterMapping.put(attribute, setter);
-        }
+
         EntityMetaProcessor entityMetaProcessor = new EntityMetaProcessor(
                 processingEnv.getTypeUtils(),
                 processingEnv.getElementUtils()
@@ -102,8 +85,8 @@ public final class IntrospectAnnotationProcessor
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        boolean result = super.process(annotations, roundEnv);
-        
+        super.process(annotations, roundEnv);
+
         // Write index file after processing is complete
         if (roundEnv.processingOver()) {
             try {
@@ -125,7 +108,10 @@ public final class IntrospectAnnotationProcessor
                 );
             }
         }
-        
-        return result;
+
+        // Never claim @Introspect: other processors (and future rounds) must still see it.
+        // AbstractAnnotationProcessor.process() already returns false unconditionally, so this
+        // is the same value it always produced, just stated where the contract is visible.
+        return false;
     }
 }

@@ -301,26 +301,17 @@ public class MetaSourceCodeGenerator {
 
         private static Type extractPrimitiveType(PrimitiveType primitiveType) {
             TypeKind kind = primitiveType.getKind();
-            switch (kind) {
-                case BOOLEAN:
-                    return boolean.class;
-                case BYTE:
-                    return byte.class;
-                case SHORT:
-                    return short.class;
-                case INT:
-                    return int.class;
-                case LONG:
-                    return long.class;
-                case CHAR:
-                    return char.class;
-                case FLOAT:
-                    return float.class;
-                case DOUBLE:
-                    return double.class;
-                default:
-                    throw new IllegalArgumentException("Unsupported primitive type: " + kind);
-            }
+            return switch (kind) {
+                case BOOLEAN -> boolean.class;
+                case BYTE -> byte.class;
+                case SHORT -> short.class;
+                case INT -> int.class;
+                case LONG -> long.class;
+                case CHAR -> char.class;
+                case FLOAT -> float.class;
+                case DOUBLE -> double.class;
+                default -> throw new IllegalArgumentException("Unsupported primitive type: " + kind);
+            };
         }
 
         private static ParameterizedType createParameterizedType(Class<?> rawType, Type... typeArguments) {

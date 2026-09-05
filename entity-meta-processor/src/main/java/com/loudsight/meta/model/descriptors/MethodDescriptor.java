@@ -7,8 +7,6 @@ import java.util.Map;
 
 public final class MethodDescriptor {
 
-    private static final String TO_STRING_FORMAT = "%s %s %s(%s)%s";
-
     private final String name;
     private final List<String> modifiers;
     private final Map<String, String> arguments;
@@ -81,7 +79,7 @@ public final class MethodDescriptor {
         } else {
             codeBlock.append("{}");
         }
-        return String.format(TO_STRING_FORMAT,
+        return String.format("%s %s %s(%s)%s",
                 String.join(" ", modifiers),
                 returnType,
                 name,

@@ -24,51 +24,50 @@ public final class TypeMapper extends ElementKindVisitor8<TypeMapper, Void> {
 
     @Override
     public TypeMapper visitTypeAsEnum(TypeElement e, Void unused) {
-        return visitTypeAsClass(e, unused);
+        return visitTypeAsClass(e, null);
     }
 
 
     @Override
     public TypeMapper visitTypeAsRecord(TypeElement e, Void unused) {
-        return visitTypeAsClass(e, unused);
+        return visitTypeAsClass(e, null);
     }
 
+    // An if/else chain rather than a switch: the old statement switch tripped Error Prone's
+    // StatementSwitchToExpressionSwitch, and the arrow form it suggests needs a `default -> { }`
+    // (ElementKind has many more constants than the three handled here), which PMD then reports
+    // as an empty block. Every other element kind is ignored, exactly as `default: break;` was.
     private void analyzeElement(Element e) {
-        switch (e.getKind()) {
-            case CONSTRUCTOR:
-                ConstructorDescriptor constructorDescriptor = new ConstructorDescriptor(
-                        this.classDescriptor.getClassName());
-                for (Modifier m : e.getModifiers()) {
-                    constructorDescriptor.addModifier(m.name());
-                }
-                ExecutableElement constructorElement = (ExecutableElement) e;
-                for (VariableElement parameter : constructorElement.getParameters()) {
-                    constructorDescriptor.addArgument(parameter.getSimpleName().toString(),
-                            parameter.asType().toString());
-                }
-                this.classDescriptor.addConstructor(constructorDescriptor);
-                break;
-            case FIELD:
-                String modifier = e.getModifiers().toString();
-                String name = e.getSimpleName().toString();
-                String type = e.asType().toString();
-                this.classDescriptor.addAttribute(new AttributeDescriptor(name, type, modifier));
-                break;
-            case METHOD:
-                String methodName = e.getSimpleName().toString();
-                String methodReturnType = ((ExecutableElement)e).getReturnType().toString();
-                MethodDescriptor methodDescriptor = new MethodDescriptor(methodName, methodReturnType);
-                for (Modifier m : e.getModifiers()) {
-                    methodDescriptor.addModifier(m.name());
-                }
-                for (Element enclosed : e.getEnclosedElements()) {
-                    methodDescriptor.addArgument(enclosed.getSimpleName().toString(),
-                            enclosed.getKind().name());
-                }
-                this.classDescriptor.addMethod(methodDescriptor);
-                break;
-            default:
-                break;
+        ElementKind kind = e.getKind();
+        if (kind == ElementKind.CONSTRUCTOR) {
+            ConstructorDescriptor constructorDescriptor = new ConstructorDescriptor(
+                    this.classDescriptor.getClassName());
+            for (Modifier m : e.getModifiers()) {
+                constructorDescriptor.addModifier(m.name());
+            }
+            ExecutableElement constructorElement = (ExecutableElement) e;
+            for (VariableElement parameter : constructorElement.getParameters()) {
+                constructorDescriptor.addArgument(parameter.getSimpleName().toString(),
+                        parameter.asType().toString());
+            }
+            this.classDescriptor.addConstructor(constructorDescriptor);
+        } else if (kind == ElementKind.FIELD) {
+            String modifier = e.getModifiers().toString();
+            String name = e.getSimpleName().toString();
+            String type = e.asType().toString();
+            this.classDescriptor.addAttribute(new AttributeDescriptor(name, type, modifier));
+        } else if (kind == ElementKind.METHOD) {
+            String methodName = e.getSimpleName().toString();
+            String methodReturnType = ((ExecutableElement) e).getReturnType().toString();
+            MethodDescriptor methodDescriptor = new MethodDescriptor(methodName, methodReturnType);
+            for (Modifier m : e.getModifiers()) {
+                methodDescriptor.addModifier(m.name());
+            }
+            for (Element enclosed : e.getEnclosedElements()) {
+                methodDescriptor.addArgument(enclosed.getSimpleName().toString(),
+                        enclosed.getKind().name());
+            }
+            this.classDescriptor.addMethod(methodDescriptor);
         }
     }
 

@@ -60,6 +60,7 @@ public final class FragmentResult<T> {
     }
     
     /**
+     * Returns the status of the deserialization.
      * @return the status of the deserialization
      */
     public Status getStatus() {
@@ -67,6 +68,7 @@ public final class FragmentResult<T> {
     }
     
     /**
+     * Returns the deserialized entity.
      * @return the deserialized entity (null if not successful)
      */
     public T getEntity() {
@@ -74,6 +76,7 @@ public final class FragmentResult<T> {
     }
     
     /**
+     * Returns the number of bytes consumed from the iterator.
      * @return number of bytes consumed from the iterator
      */
     public int getBytesConsumed() {
@@ -81,6 +84,7 @@ public final class FragmentResult<T> {
     }
     
     /**
+     * Returns whether deserialization was successful.
      * @return true if deserialization was successful
      */
     public boolean isSuccess() {
@@ -88,6 +92,7 @@ public final class FragmentResult<T> {
     }
     
     /**
+     * Returns whether more data is needed.
      * @return true if more data is needed
      */
     public boolean isIncomplete() {
@@ -95,6 +100,7 @@ public final class FragmentResult<T> {
     }
     
     /**
+     * Returns whether the data is invalid.
      * @return true if data is invalid
      */
     public boolean isInvalid() {

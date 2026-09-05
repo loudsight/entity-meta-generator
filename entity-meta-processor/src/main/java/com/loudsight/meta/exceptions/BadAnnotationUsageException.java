@@ -3,13 +3,10 @@ package com.loudsight.meta.exceptions;
 public class BadAnnotationUsageException extends Exception {
     private static final long serialVersionUID = 1L;
 
-    private static final String EXCEPTION_DESCRIPTION =
-            "Element %s is incorrectly annotated with %s: %s";
-
     public BadAnnotationUsageException(String annotatedElementClassName,
                                         String annotation,
                                         String description) {
-        super(String.format(EXCEPTION_DESCRIPTION,
+        super(String.format("Element %s is incorrectly annotated with %s: %s",
                 annotatedElementClassName,
                 annotation,
                 description));

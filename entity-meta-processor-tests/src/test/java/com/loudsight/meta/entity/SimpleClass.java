@@ -43,6 +43,10 @@ public class SimpleClass {
         this.strings = strings;
     }
 
+    // getClass() is deliberate, not a slip: SimpleParentClass extends SimpleClass and adds a
+    // field without overriding equals, so switching to instanceof would make a SimpleParentClass
+    // equal to a SimpleClass with matching inherited fields and break symmetry.
+    @SuppressWarnings("EqualsGetClass")
     @Override
     public boolean equals(Object o) {
         if (this == o) {

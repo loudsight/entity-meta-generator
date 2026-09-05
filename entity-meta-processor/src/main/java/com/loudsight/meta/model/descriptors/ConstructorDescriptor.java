@@ -4,8 +4,6 @@ import java.util.*;
 
 public final class ConstructorDescriptor {
 
-    private static final String TO_STRING_FORMAT = "%s %s(%s)%s";
-
     private final String className;
     private final List<String> modifiers;
     private final Map<String, String> arguments;
@@ -64,7 +62,7 @@ public final class ConstructorDescriptor {
         } else {
             codeBlock.append("{}");
         }
-        return String.format(TO_STRING_FORMAT,
+        return String.format("%s %s(%s)%s",
                 String.join(" ", modifiers),
                 className,
                 argList,

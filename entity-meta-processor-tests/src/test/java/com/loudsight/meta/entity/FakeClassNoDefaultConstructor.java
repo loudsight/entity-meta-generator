@@ -64,11 +64,10 @@ public class FakeClassNoDefaultConstructor {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof FakeClassNoDefaultConstructor that)) {
             return false;
         }
-        FakeClassNoDefaultConstructor that = (FakeClassNoDefaultConstructor) o;
-        return i == that.i 
+        return i == that.i
             && Double.compare(that.d, d) == 0 
             && Objects.equals(s, that.s) 
             && Objects.equals(strings, that.strings) 
