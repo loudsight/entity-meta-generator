@@ -1,6 +1,7 @@
 package com.loudsight.meta.serialization.transform;
 
 import com.loudsight.meta.serialization.EntityType;
+import com.loudsight.useful.helper.ClassHelper;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +19,7 @@ public final class SetEntityTransform extends CollectionEntityTransform<Set<?>> 
 
 
     private SetEntityTransform() {
-        super(EntityType.SET, (Class<Set<?>>)(Object)Set.class);
+        super(EntityType.SET, ClassHelper.<Class<Set<?>>>uncheckedCast(Set.class));
     }
 
     @Override public Set<?> newCollection(int size, Function<Integer, Object> init) {

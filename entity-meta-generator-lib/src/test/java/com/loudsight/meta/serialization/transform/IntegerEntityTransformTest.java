@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class IntegerEntityTransformTest extends NumberEntityTransformTest<Integer> {
 
     IntegerEntityTransformTest() {
-        super(-1, 0, 10, Integer.MAX_VALUE, Integer.MIN_VALUE);
+        super(new Integer[]{-1, 0, 10, Integer.MAX_VALUE, Integer.MIN_VALUE});
     }
 
 

@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import com.loudsight.meta.annotation.Id;
 import com.loudsight.meta.annotation.Transient;
+import com.loudsight.useful.helper.ClassHelper;
 
 /**
  * Record representing a field of an entity.
@@ -92,7 +93,7 @@ public record EntityField<E, T> (
      * @param value the value to set
      */
     public void set(E entity, Object value) {
-        setter.apply(entity, (T) value);
+        setter.apply(entity, ClassHelper.uncheckedCast(value));
     }
 
     // Delegate methods to SchemaField

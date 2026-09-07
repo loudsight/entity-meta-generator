@@ -10,6 +10,7 @@ public class MetaInfo {
 
     private final String typeName;
     private final String simpleTypeName;
+    private final int typeParameterCount;
     private final boolean isEnum;
     private final boolean isRecord;
     private final List<EntityVariableInfo> fields;
@@ -21,6 +22,7 @@ public class MetaInfo {
 
     public MetaInfo (String typeName,
               String simpleTypeName,
+              int typeParameterCount,
               boolean isEnum,
               boolean isRecord,
                      List<EntityVariableInfo> fields,
@@ -30,6 +32,7 @@ public class MetaInfo {
               List<EntityMethodInfo> methods) {
         this.typeName = typeName;
         this.simpleTypeName = simpleTypeName;
+        this.typeParameterCount = typeParameterCount;
         this.isEnum = isEnum;
         this.isRecord = isRecord;
         this.fields = fields;
@@ -77,6 +80,10 @@ public class MetaInfo {
 
     public String simpleTypeName() {
         return simpleTypeName;
+    }
+
+    public int typeParameterCount() {
+        return typeParameterCount;
     }
 
     public boolean isEnum() {

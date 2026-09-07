@@ -2,6 +2,7 @@ package com.loudsight.meta.serialization;
 
 import com.loudsight.meta.MetaRepository;
 import com.loudsight.meta.serialization.transform.*;
+import com.loudsight.useful.helper.ClassHelper;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ public final class EntityTransforms {
         entityTypeToEntityTransform.put(entityTransform.entityType, entityTransform);
     }
     public <T> EntityTransform<T> getEntityTransform(EntityType entityType) {
-        return (EntityTransform<T>)entityTypeToEntityTransform.get(entityType);
+        return ClassHelper.uncheckedCast(entityTypeToEntityTransform.get(entityType));
     }
 
     public <T> EntityTransform<T> getEntityTransform(Object entity) {
@@ -54,12 +55,12 @@ public final class EntityTransforms {
                 continue;
             }
             if (value.canTransform(entity)) {
-                return (EntityTransform<T>)value;
+                return ClassHelper.uncheckedCast(value);
             }
         }
 
         if (MetaRepository.getInstance().getMeta(entity.getClass()) != null) {
-            return (EntityTransform<T>)classToEntityType.get(Object.class);
+            return ClassHelper.uncheckedCast(classToEntityType.get(Object.class));
         }
 
         return null;

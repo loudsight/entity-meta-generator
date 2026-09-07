@@ -33,13 +33,13 @@ public final class TypeConverters {
 
     public  <T> T convert(Object from, Class<T> toType) {
         if (toType == from.getClass()) {
-            return (T)from;
+            return ClassHelper.uncheckedCast(from);
         }
         var fromConverter = converters.getOrDefault(toType, NO_CONVERTERS);
         var fromKClass = from.getClass();
         var toConverter = fromConverter.getOrDefault(fromKClass, new NoOpConverter());
 
-        return (T)toConverter.convert(ClassHelper.uncheckedCast(from));
+        return ClassHelper.uncheckedCast(toConverter.convert(ClassHelper.uncheckedCast(from)));
     }
 
     static class NoOpConverter implements TypeConverter<Object, Object> {

@@ -41,6 +41,7 @@ public class MetaGeneratorService {
         return new MetaInfo(
                 typeName,
                 getSimpleName(aClass),
+            aClass.getTypeParameters().size(),
                 false,
                 false,
                 entityFieldInfos,
@@ -241,6 +242,7 @@ public class MetaGeneratorService {
         return new MetaInfo(
                 typeName,
                 simpleTypeName,
+            typeElement.getTypeParameters().size(),
                 isEnum,
                 isRecord,
                 fields.values().stream().toList(),

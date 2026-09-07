@@ -1,6 +1,7 @@
 package com.loudsight.meta.serialization.transform;
 
 import com.loudsight.meta.serialization.EntityType;
+import com.loudsight.useful.helper.ClassHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ private static final class ListEntityTransformHolder {
 
 
     private ListEntityTransform() {
-        super(EntityType.LIST, (Class<List<?>>)(Object)List.class);
+        super(EntityType.LIST, ClassHelper.<Class<List<?>>>uncheckedCast(List.class));
     }
 
     @Override public List<?> newCollection(int size, Function<Integer, Object> init) {

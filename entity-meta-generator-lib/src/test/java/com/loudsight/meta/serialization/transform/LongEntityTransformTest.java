@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class LongEntityTransformTest extends NumberEntityTransformTest<Long> {
 
     LongEntityTransformTest() {
-        super(-1L, 0L, 10L, Long.MAX_VALUE, Long.MIN_VALUE);
+        super(new Long[]{-1L, 0L, 10L, Long.MAX_VALUE, Long.MIN_VALUE});
     }
 
 

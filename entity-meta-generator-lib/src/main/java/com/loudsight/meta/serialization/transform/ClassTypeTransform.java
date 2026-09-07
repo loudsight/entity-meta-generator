@@ -2,6 +2,7 @@ package com.loudsight.meta.serialization.transform;
 
 import com.loudsight.meta.serialization.EntityTransform;
 import com.loudsight.meta.serialization.EntityType;
+import com.loudsight.useful.helper.ClassHelper;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +17,7 @@ private static final class ClassTypeTransformHolder {
         return ClassTypeTransformHolder.INSTANCE;
     }
     private ClassTypeTransform() {
-        super(EntityType.CLASS, (Class<Class<?>>)(Object)Class.class);
+        super(EntityType.CLASS, ClassHelper.<Class<Class<?>>>uncheckedCast(Class.class));
     }
 
     @Override public void serializeEntity( Class<?> entity, List<Byte> bytes) {

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public abstract class NumberEntityTransformTest<T extends Number> {
 
     private final T[] expectations;
-    protected NumberEntityTransformTest(T...expectations){
+    protected NumberEntityTransformTest(T[] expectations){
         this.expectations = expectations;
     }
 

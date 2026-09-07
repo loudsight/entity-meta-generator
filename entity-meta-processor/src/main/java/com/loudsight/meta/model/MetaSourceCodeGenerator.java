@@ -4,15 +4,13 @@ import com.loudsight.meta.DefaultMeta;
 import com.loudsight.meta.EntityInstantiator;
 import com.loudsight.meta.MetaInfo;
 import com.loudsight.meta.entity.*;
+import com.loudsight.useful.helper.ClassHelper;
 import com.squareup.javapoet.*;
 
-import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.*;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,18 +25,29 @@ public class MetaSourceCodeGenerator {
     }
     private final MetaInfo metaInfo;
     private final ClassName pojoClassType;
+    private final TypeName pojoType;
     private final ClassName metaClassType;
     private final TypeSpec.Builder metaClassBuilder;
 
     public MetaSourceCodeGenerator(MetaInfo metaInfo) throws IOException {
         this.metaInfo = metaInfo;
         this.pojoClassType = ClassName.get(metaInfo.getPackageName(), metaInfo.simpleTypeName());
+        this.pojoType = parameterizeWithWildcards(pojoClassType, metaInfo.typeParameterCount());
         this.metaClassType = ClassName.get(metaInfo.getPackageName(), metaInfo.simpleTypeName() + "Meta");
 
         this.metaClassBuilder = TypeSpec
                 .classBuilder(metaInfo.simpleTypeName() + "Meta")
-                .superclass(ParameterizedTypeName.get(ClassName.get(DefaultMeta.class), pojoClassType))
-                .addModifiers(Modifier.PUBLIC);
+                .superclass(ParameterizedTypeName.get(ClassName.get(DefaultMeta.class), pojoType))
+            .addModifiers(Modifier.PUBLIC);
+    }
+
+    private static TypeName parameterizeWithWildcards(ClassName className, int typeParameterCount) {
+        if (typeParameterCount == 0) {
+            return className;
+        }
+        var typeArguments = new TypeName[typeParameterCount];
+        Arrays.fill(typeArguments, WildcardTypeName.subtypeOf(Object.class));
+        return ParameterizedTypeName.get(className, typeArguments);
     }
 
 //    class Builder {
@@ -101,16 +110,28 @@ public class MetaSourceCodeGenerator {
                         List.class
                 ).build().toString().replace(";", "").trim();
                 constructorParameters.add(entityParameter);
-                var statement = String.format(Locale.ROOT, "(%s)args[%d]", parameterTypeName, i);
+                String statement;
+                if (hasTypeArguments(constructorParameter.getType().getType())) {
+                    statement = CodeBlock.builder()
+                            .add("$T.uncheckedCast(args[$L])", ClassHelper.class, i)
+                            .build()
+                            .toString();
+                } else if ("Object".equals(parameterTypeName) || "java.lang.Object".equals(parameterTypeName)) {
+                    statement = String.format(Locale.ROOT, "args[%d]", i);
+                } else {
+                    statement = String.format(Locale.ROOT, "(%s)args[%d]", parameterTypeName, i);
+                }
                 constructorArgsCode.add(statement);
             });
+            var constructorType = metaInfo.typeParameterCount() == 0 ? "$T" : "$T<>";
             String constructorStr = String.format(Locale.ROOT, """
                                     new $T(
                                         $T.of(%s),
-                                        args -> new $T(%s)
+                                        args -> new %s(%s)
                                     )
                             """,
                     String.join(", ", constructorParameters),
+                    constructorType,
                     String.join(",", constructorArgsCode));
             var constructor = CodeBlock.builder().addStatement(
                     constructorStr,
@@ -220,7 +241,7 @@ public class MetaSourceCodeGenerator {
                 ClassName.get(List.class),
                 ParameterizedTypeName.get(
                         ClassName.get(EntityField.class),
-                        pojoClassType,
+                        pojoType,
                         WildcardTypeName.subtypeOf(Object.class)
                 )
         );
@@ -250,8 +271,7 @@ public class MetaSourceCodeGenerator {
             TypeMirror typeMirror = info.getType();
 
             if (isGeneric(typeMirror)) {
-                var type = convertToJavaType(typeMirror);
-                return TypeName.get(type);
+                return typeNameWithWildcards(typeMirror);
             }
 
             return TypeName.get(typeMirror);
@@ -264,73 +284,21 @@ public class MetaSourceCodeGenerator {
 
     }
 
-        private static Type convertToJavaType(TypeMirror typeMirror) {
+        private static TypeName typeNameWithWildcards(TypeMirror typeMirror) {
             if (typeMirror instanceof DeclaredType declaredType) {
-
-                Element element = declaredType.asElement();
-                Class<?> rawType = extractClass(element);
-                List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
-                Type[] javaTypeArguments = new Type[typeArguments.size()];
-
-//                for (int i = 0; i < typeArguments.size(); i++) {
-//                    javaTypeArguments[i] = convertToJavaType(typeArguments.get(i));
-//                }
-
-                return ParameterizedType.class.isAssignableFrom(rawType)
-                        ? createParameterizedType(rawType, javaTypeArguments)
-                        : rawType;
+                var rawType = ClassName.get((TypeElement) declaredType.asElement());
+                var typeArguments = declaredType.getTypeArguments().stream()
+                        .map(MetaSourceCodeGenerator::typeNameWithWildcards)
+                        .toArray(TypeName[]::new);
+                return typeArguments.length == 0
+                        ? rawType
+                        : ParameterizedTypeName.get(rawType, typeArguments);
             } else if (typeMirror instanceof ArrayType arrayType) {
-                Type componentType = convertToJavaType(arrayType.getComponentType());
-                return Array.newInstance((Class<?>) componentType, 0).getClass();
-            } else if (typeMirror instanceof PrimitiveType primitiveType) {
-                return extractPrimitiveType(primitiveType);
+                return ArrayTypeName.of(typeNameWithWildcards(arrayType.getComponentType()));
+            } else if (typeMirror instanceof TypeVariable) {
+                return WildcardTypeName.subtypeOf(Object.class);
             }
-
-            // Handle other cases if necessary
-            throw new IllegalArgumentException("Unsupported TypeMirror: " + typeMirror);
-        }
-
-        private static Class<?> extractClass(Element element) {
-            String className = element.toString();
-            try {
-                return Class.forName(className);
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Failed to extract class: " + className, e);
-            }
-        }
-
-        private static Type extractPrimitiveType(PrimitiveType primitiveType) {
-            TypeKind kind = primitiveType.getKind();
-            return switch (kind) {
-                case BOOLEAN -> boolean.class;
-                case BYTE -> byte.class;
-                case SHORT -> short.class;
-                case INT -> int.class;
-                case LONG -> long.class;
-                case CHAR -> char.class;
-                case FLOAT -> float.class;
-                case DOUBLE -> double.class;
-                default -> throw new IllegalArgumentException("Unsupported primitive type: " + kind);
-            };
-        }
-
-        private static ParameterizedType createParameterizedType(Class<?> rawType, Type... typeArguments) {
-            return new ParameterizedType() {
-                @Override
-                public Type[] getActualTypeArguments() {
-                    return typeArguments.clone();
-                }
-
-                @Override
-                public Type getRawType() {
-                    return rawType;
-                }
-
-                @Override
-                public Type getOwnerType() {
-                    return null;
-                }
-            };
+            return TypeName.get(typeMirror);
         }
 
         public static boolean isGeneric(TypeMirror typeMirror) {
@@ -343,6 +311,10 @@ public class MetaSourceCodeGenerator {
                 }
             }
             return false;
+        }
+
+        private static boolean hasTypeArguments(TypeMirror typeMirror) {
+            return typeMirror instanceof DeclaredType declaredType && !declaredType.getTypeArguments().isEmpty();
         }
 
     TypeName entityVariableInfoToParameterizedTypeNameWithoutGenericParams(EntityTypeInfo info) {
@@ -389,7 +361,7 @@ public class MetaSourceCodeGenerator {
         TypeName genericType = entityVariableInfoToParameterizedTypeName(info.getType());
         ParameterizedTypeName fieldType = ParameterizedTypeName.get(
                 ClassName.get(EntityField.class),
-                pojoClassType,
+                pojoType,
                 genericType
         );
         var annotations = generateEntityAnnotations(info.getAnnotations());
@@ -408,14 +380,14 @@ public class MetaSourceCodeGenerator {
                         String.format(Locale.ROOT, """
                                                     new $T(
                                                         "%s",
-                                                        (Class<$T>)(Object)%s.class,
+                                                        $T.uncheckedCast(%s.class),
                                                         %s, // isEnum,
                                                         %s, // isCollection,
                                                         java.util.List.of(%s),
                                                          entity -> entity.%s(),
                                                     %s
                                                     )
-                                                        
+
                                         """.stripIndent(),
                                 info.getName(),
                                 info.getType().getTypeName(),
@@ -425,7 +397,7 @@ public class MetaSourceCodeGenerator {
                                 metaInfo.isRecord()? info.getName() : getGetterName(info),
                                 setter),
                         fieldType,
-                        genericType
+                        ClassHelper.class
                 )
                 .build();
     }
@@ -481,7 +453,7 @@ public class MetaSourceCodeGenerator {
                         "fieldMap"
                 )
                 .addStatement(constructorStatement)
-                .returns(pojoClassType)
+                .returns(pojoType)
                 .build();
         metaClassBuilder.addMethod(newInstanceMethod);
     }
@@ -492,7 +464,7 @@ public class MetaSourceCodeGenerator {
                 .addStatement(String.format(Locale.ROOT, """
                                 super(
                                 %sSchema.getInstance(),
-                                            ${simpleTypeName}.class,
+                                            $T.uncheckedCast(${simpleTypeName}.class),
                                             ${simpleTypeName}Meta._fields,
                                             ${simpleTypeName}Meta.constructors,
                                             ${simpleTypeName}Meta.annotations,
@@ -500,7 +472,7 @@ public class MetaSourceCodeGenerator {
                                 );
                                     """.replaceAll("\\$\\{simpleTypeName}", metaInfo.simpleTypeName()),
                         metaInfo.simpleTypeName()
-                ), Collections.class).build();
+                    ), ClassHelper.class, Collections.class).build();
         metaClassBuilder.addMethod(constructor);
     }
 

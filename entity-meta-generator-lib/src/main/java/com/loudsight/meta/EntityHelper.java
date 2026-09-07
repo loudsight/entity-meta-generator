@@ -105,7 +105,7 @@ public final class EntityHelper {
                     return ClassHelper.uncheckedCast(result);
             }
 
-            Converter<Object, T> converter = (Converter<Object, T>) converters.get(sourceClass, targetClass);
+            Converter<Object, T> converter = ClassHelper.uncheckedCast(converters.get(sourceClass, targetClass));
 
             if (converter != null) {
                 return converter.apply(value);

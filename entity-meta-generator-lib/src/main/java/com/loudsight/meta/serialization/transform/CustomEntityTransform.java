@@ -4,6 +4,7 @@ import com.loudsight.meta.Meta;
 import com.loudsight.meta.MetaRepository;
 import com.loudsight.meta.serialization.EntityTransform;
 import com.loudsight.meta.serialization.EntityType;
+import com.loudsight.useful.helper.ClassHelper;
 
 import com.loudsight.useful.helper.logging.LoggingHelper;
 
@@ -72,7 +73,7 @@ public final class CustomEntityTransform extends EntityTransform<Object> {
             stack.add(entity);
             SERIALIZATION_DEPTH.set(depth + 1);
             
-            var meta = MetaRepository.getInstance().getMeta((Class<T>)entity.getClass());
+            var meta = MetaRepository.getInstance().getMeta(ClassHelper.<Class<T>>uncheckedCast(entity.getClass()));
             if (meta == null) {
                 throw new IllegalArgumentException("Unknown entity class: " + entity.getClass().getSimpleName());
             }

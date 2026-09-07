@@ -316,7 +316,7 @@ public abstract class EntityTransform<T> {
             var entityTransform = EntityTransforms.getInstance().getEntityTransform(entityType);
             
             // Try to deserialize the entity
-            T entity = (T)entityTransform.deserializeEntity(countingIterator);
+            T entity = ClassHelper.uncheckedCast(entityTransform.deserializeEntity(countingIterator));
             
             return FragmentResult.success(entity, countingIterator.getCount());
             

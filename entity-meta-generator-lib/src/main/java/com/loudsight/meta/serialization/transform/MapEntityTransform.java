@@ -2,6 +2,7 @@ package com.loudsight.meta.serialization.transform;
 
 import com.loudsight.meta.serialization.EntityTransform;
 import com.loudsight.meta.serialization.EntityType;
+import com.loudsight.useful.helper.ClassHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ public final class MapEntityTransform extends EntityTransform<Map<?, ?>> {
         return MapEntityTransform.MapEntityTransformHolder.INSTANCE;
     }
     private MapEntityTransform() {
-        super(EntityType.MAP, (Class<Map<?,?>>)(Object)Map.class);
+        super(EntityType.MAP, ClassHelper.<Class<Map<?, ?>>>uncheckedCast(Map.class));
     }
 
 
