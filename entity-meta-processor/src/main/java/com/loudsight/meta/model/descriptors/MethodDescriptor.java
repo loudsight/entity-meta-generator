@@ -1,6 +1,7 @@
 package com.loudsight.meta.model.descriptors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +38,11 @@ public final class MethodDescriptor {
     }
 
     public List<String> getModifiers() {
-        return modifiers;
+        return Collections.unmodifiableList(modifiers);
     }
 
     public Map<String, String> getArguments() {
-        return arguments;
+        return Collections.unmodifiableMap(arguments);
     }
 
     public String getReturnType() {

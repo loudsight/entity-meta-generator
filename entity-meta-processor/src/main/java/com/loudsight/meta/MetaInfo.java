@@ -2,6 +2,7 @@ package com.loudsight.meta;
 
 import com.loudsight.meta.entity.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,16 +36,16 @@ public class MetaInfo {
         this.typeParameterCount = typeParameterCount;
         this.isEnum = isEnum;
         this.isRecord = isRecord;
-        this.fields = fields;
-        this.constructors = constructors;
-        this.annotations = annotations;
-        this.typeHierarchy = typeHierarchy;
+        this.fields = List.copyOf(fields);
+        this.constructors = List.copyOf(constructors);
+        this.annotations = List.copyOf(annotations);
+        this.typeHierarchy = List.copyOf(typeHierarchy);
 //        this.methods = methods;
         methodMap =
 //        get() {
 //            val sortedEntityMethodInfos: List<EntityMethodInfo> = ArrayList(EntityMethodInfos)
 //                .sortedBy { obj: EntityMethodInfo -> obj.name }
-                methods.stream().collect(Collectors.toMap(EntityMethodInfo::name, it -> it));
+                methods.stream().collect(Collectors.toUnmodifiableMap(EntityMethodInfo::name, it -> it));
     }
     public String getPackageName() {
         var lastDotIndex = typeName.lastIndexOf('.');
@@ -75,7 +76,7 @@ public class MetaInfo {
     }
 
     public Map<String, EntityMethodInfo> getMethodMap() {
-        return methodMap;
+        return Collections.unmodifiableMap(methodMap);
     }
 
     public String simpleTypeName() {

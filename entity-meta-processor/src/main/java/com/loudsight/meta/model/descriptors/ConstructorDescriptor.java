@@ -31,11 +31,11 @@ public final class ConstructorDescriptor {
     }
 
     public List<String> getModifiers() {
-        return modifiers;
+        return Collections.unmodifiableList(modifiers);
     }
 
     public Map<String, String> getArguments() {
-        return arguments;
+        return Collections.unmodifiableMap(arguments);
     }
 
     public CodeBlockDescriptor getCodeDescriptor() {

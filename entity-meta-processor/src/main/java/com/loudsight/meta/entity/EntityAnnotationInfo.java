@@ -3,6 +3,7 @@ package com.loudsight.meta.entity;
 import com.loudsight.meta.annotation.Id;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,10 +15,10 @@ public class EntityAnnotationInfo {
 
     public EntityAnnotationInfo(String name, AnnotationValue... annotationValues) {
         this.name = name;
-        this.properties = Arrays.stream(annotationValues).collect(Collectors.toMap(AnnotationValue::name, it -> it));
+        this.properties = Arrays.stream(annotationValues).collect(Collectors.toUnmodifiableMap(AnnotationValue::name, it -> it));
     }
     public Map<String, AnnotationValue> getProperties() {
-        return properties;
+        return Collections.unmodifiableMap(properties);
     }
 
     public String getName() {

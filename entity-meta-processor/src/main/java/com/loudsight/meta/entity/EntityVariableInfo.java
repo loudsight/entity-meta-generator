@@ -2,6 +2,7 @@ package com.loudsight.meta.entity;
 
 import javax.lang.model.element.TypeElement;
 import java.util.Collection;
+import java.util.List;
 
 public class EntityVariableInfo {
     private final String name;
@@ -24,7 +25,7 @@ public class EntityVariableInfo {
         this.typeElement = typeElement;
         this.isEnum = isEnum;
         this.isCollection = isCollection;
-        this.annotations = annotations;
+        this.annotations = List.copyOf(annotations);
     }
 //    public Boolean isNullable() {
 //

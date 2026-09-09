@@ -1,6 +1,7 @@
 package com.loudsight.meta.model.descriptors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class ClassDescriptor {
@@ -51,15 +52,15 @@ public final class ClassDescriptor {
     }
 
     public List<ConstructorDescriptor> getConstructors() {
-        return constructors;
+        return Collections.unmodifiableList(constructors);
     }
 
     public List<AttributeDescriptor> getAttributes() {
-        return attributes;
+        return Collections.unmodifiableList(attributes);
     }
 
     public List<MethodDescriptor> getMethods() {
-        return methods;
+        return Collections.unmodifiableList(methods);
     }
 
     @Override

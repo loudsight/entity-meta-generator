@@ -13,7 +13,7 @@ public class GenericEntityTypeInfo extends EntityTypeInfo {
     public GenericEntityTypeInfo(String typeName, List<EntityTypeInfo> genericArguments, TypeMirror type) {
         super(typeName, true, type);
 
-        this.genericArguments = genericArguments;
+        this.genericArguments = List.copyOf(genericArguments);
         var genericArgumentsStr =
 
                 genericArguments.stream().map(EntityTypeInfo::toString).collect(Collectors.joining(", "));

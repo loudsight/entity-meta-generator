@@ -8,5 +8,8 @@ public record EntityMethodInfo(
     EntityTypeInfo returnType,
     List<EntityAnnotationInfo> annotations
 ){
-
+    public EntityMethodInfo {
+        parameters = List.copyOf(parameters);
+        annotations = List.copyOf(annotations);
+    }
 }

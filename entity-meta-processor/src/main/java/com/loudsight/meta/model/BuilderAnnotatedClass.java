@@ -69,7 +69,7 @@ public final class BuilderAnnotatedClass {
     }
 
     public BuilderAnnotatedClass setConstructors(List<ConstructorDescriptor> constructors) {
-        this.constructors = constructors;
+        this.constructors = List.copyOf(constructors);
         this.constructors.stream().filter(constructor ->
                 constructor.getArguments().isEmpty())
                 .findFirst()
@@ -81,7 +81,7 @@ public final class BuilderAnnotatedClass {
 
     public BuilderAnnotatedClass setAttributeSetterMapping(
             Map<AttributeDescriptor, Optional<MethodDescriptor>> attributeSetterMapping) {
-        this.attributeSetterMapping = attributeSetterMapping;
+        this.attributeSetterMapping = Map.copyOf(attributeSetterMapping);
         return this;
     }
 
