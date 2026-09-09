@@ -26,7 +26,7 @@ public class EntityConstructor {
      */
     public EntityConstructor(List<EntityParameter> entityParameters, Function<Object[], Object> constructor) {
         this.constructor = constructor;
-        this.entityParameters = entityParameters;
+        this.entityParameters = List.copyOf(entityParameters);
     }
     /**
      * Creates a new instance using this constructor.

@@ -6,6 +6,7 @@ import com.loudsight.meta.MetaInfo;
 import com.loudsight.meta.entity.*;
 import com.loudsight.useful.helper.ClassHelper;
 import com.squareup.javapoet.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -16,6 +17,14 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.Locale;
 
+@SuppressFBWarnings(
+        value = {"FORMAT_STRING_MANIPULATION", "VA_FORMAT_STRING_USES_NEWLINE"},
+        justification = "This is a compile-time source-code emitter. Every String.format call here "
+                + "builds generated Java text from javac-derived identifiers (type names, field "
+                + "names), never from runtime or attacker input, so there is no format-string "
+                + "injection surface. The literal \\n line breaks are intentional: generated "
+                + "sources must use LF regardless of the build platform, which %n would not "
+                + "guarantee.")
 public class MetaSourceCodeGenerator {
     //    private static final LoggingHelper LOGGER = LoggingHelper.wrap(ApiScanner.class);
     private static final Map<String, String> typeConversions = new HashMap<>();

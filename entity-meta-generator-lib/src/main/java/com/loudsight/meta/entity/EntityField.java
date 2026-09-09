@@ -1,6 +1,7 @@
 package com.loudsight.meta.entity;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 import com.loudsight.meta.annotation.Id;
@@ -24,6 +25,12 @@ public record EntityField<E, T> (
         Collection<EntityAnnotation> annotations,
         @Transient Function<E, T> getter,
         @Transient Setter<E, T> setter) {
+
+    // Canonical constructor - defensively copies annotations so a caller holding the original
+    // collection cannot mutate this field's annotation set.
+    public EntityField {
+        annotations = List.copyOf(annotations);
+    }
 
     /**
      * Functional interface for setting field values.

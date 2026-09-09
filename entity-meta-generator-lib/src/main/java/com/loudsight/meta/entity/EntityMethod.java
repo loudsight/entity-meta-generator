@@ -19,6 +19,12 @@ public record EntityMethod<T, R>(String name,
                                  List<EntityAnnotation> annotations,
                                  Invoker<T, R> invoker) {
 
+    // Canonical constructor - defensively copies the list components.
+    public EntityMethod {
+        parameters = List.copyOf(parameters);
+        annotations = List.copyOf(annotations);
+    }
+
     @FunctionalInterface
     interface Invoker<T, R> {
         /**

@@ -9,6 +9,7 @@ import com.loudsight.meta.annotation.Introspect;
 import com.loudsight.meta.exceptions.BadAnnotationUsageException;
 
 import com.google.auto.service.AutoService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -67,6 +68,11 @@ public final class IntrospectAnnotationProcessor
     }
 
     @Override
+    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION",
+            justification = "Deliberate: any failure during meta/schema generation - checked "
+                    + "(IOException from the writers) or runtime - is wrapped as a "
+                    + "ClassGenerationException diagnostic so a generation bug surfaces as a "
+                    + "compiler error rather than crashing javac with a stack trace.")
     void finalizeElementProcessing(MetaInfo model)  throws ClassGenerationException {
         try {
             MetaClassWriter writer = new MetaClassWriter(this.processingEnv.getFiler());

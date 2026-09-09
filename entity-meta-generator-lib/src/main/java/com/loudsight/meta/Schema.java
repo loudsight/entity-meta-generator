@@ -24,6 +24,13 @@ public record Schema(
     List<SchemaField> fields,
     List<String> typeHierarchy
 ) {
+    // Canonical constructor - defensively copies the list components so a caller that keeps a
+    // reference to the arguments cannot mutate this Schema's contents afterwards.
+    public Schema {
+        fields = List.copyOf(fields);
+        typeHierarchy = List.copyOf(typeHierarchy);
+    }
+
     /**
      * Gets fields as a map keyed by field name.
      * @return map of fields by name

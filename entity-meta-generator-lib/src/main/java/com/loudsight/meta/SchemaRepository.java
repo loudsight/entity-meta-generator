@@ -75,7 +75,7 @@ public class SchemaRepository {
             } finally {
                 Thread.currentThread().setContextClassLoader(originalContextClassLoader);
             }
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException | RuntimeException e) {
             throw new IllegalStateException("Schema not found for type: " + typeName +
                 ". Schema must be registered via register() or available on classpath as " + typeName + "Schema", e);
         }

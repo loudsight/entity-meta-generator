@@ -36,7 +36,7 @@ public abstract class EntityTransform<T> {
      */
     public EntityTransform(EntityType entityType, Class<?>... targetClass) {
         this.entityType = entityType;
-        this.targetClass = Arrays.asList(targetClass);
+        this.targetClass = List.of(targetClass);
     }
 
     /**
@@ -273,6 +273,9 @@ public abstract class EntityTransform<T> {
 
                 @Override
                 public Byte next() {
+                    if (index >= length) {
+                        throw new NoSuchElementException();
+                    }
                     var res = bytes[index];
                     index++;
                     return res;

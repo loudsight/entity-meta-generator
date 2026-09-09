@@ -72,18 +72,6 @@ public final class EntityHelper {
     }
 
     /**
-     * Gets the converters map.
-     * @return the converters map
-     */
-    public static MultiKeyMap<Class<?>, Class<?>, Converter<Object, ?>> converters() {
-//            return java.util.Map.of<Pair<Class<?>, Class<?>?>, Function<?, ?>>(
-//                Pair<Class<?>, Class<?>?>(Long.class.java, Int.class.javaPrimitiveType),
-//                Function<Long, Any> { obj: Long -> obj.toInt() } as Function<Long, ?>
-//            )
-        return converters;
-    }
-
-    /**
      * Converts a value to the target class.
      * @param value the value to convert
      * @param targetClass the target class
@@ -122,7 +110,7 @@ public final class EntityHelper {
 //                    result = java.lang.Long.valueOf(value.toString())
 //                    return uncheckedCast(result);
 //                }
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException | RuntimeException e) {
             logger.logError("Unexpected error", e);
         }
         return ClassHelper.uncheckedCast(result);

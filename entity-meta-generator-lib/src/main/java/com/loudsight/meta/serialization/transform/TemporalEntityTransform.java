@@ -34,10 +34,12 @@ public final class TemporalEntityTransform extends EntityTransform<Temporal> {
             // TimeProvider), so stamping the zone on is correct there.
             if (entity instanceof ZonedDateTime zdt) {
                 dt = zdt.withZoneSameInstant(ZoneOffset.UTC);
+            } else if (entity instanceof LocalDateTime ldt) {
+                dt = ldt.atZone(ZoneOffset.UTC);
             } else {
-                dt = ((LocalDateTime)entity).atZone(
-                        ZoneOffset.UTC
-                );
+                throw new IllegalArgumentException(
+                        "Unsupported Temporal type for DATETIME serialization: "
+                                + (entity == null ? "null" : entity.getClass().getName()));
             }
         var millis = dt.toInstant().toEpochMilli();
         var nanos = dt.getNano();

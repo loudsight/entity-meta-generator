@@ -21,7 +21,9 @@ public class EntityTypeInfo {
         this.isObject = isObject;
         this.typeMirror = typeMirror;
         this.str = typeName;
-        this.isBoolean = "boolean".equalsIgnoreCase(typeName);
+        this.isBoolean = "boolean".equals(typeName)
+                || "Boolean".equals(typeName)
+                || "java.lang.Boolean".equals(typeName);
     }
 
 

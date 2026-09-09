@@ -28,19 +28,11 @@ public abstract class NumberEntityTransformTest<T extends Number> {
 
     protected void testValue(T expected) {
         Iterable<Byte> bytes = serializeEntity(expected);
-        T actual = deserializeEntity(new Iterable<>() {
-            private final Iterator<Byte> it = bytes.iterator();
-
-            {
-                it.next();
-                it.remove();
-            }
-
-            @Override
-            public Iterator<Byte> iterator() {
-                return it;
-            }
-        });
+        Iterator<Byte> it = bytes.iterator();
+        it.next();
+        it.remove();
+        // Single-use Iterable that always hands back the same, already-advanced iterator.
+        T actual = deserializeEntity(() -> it);
 
         assertEquals(expected, actual);
     }

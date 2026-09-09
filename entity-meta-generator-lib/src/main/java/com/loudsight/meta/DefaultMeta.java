@@ -29,9 +29,9 @@ public abstract class DefaultMeta<T> implements Meta<T> {
     ) {
         this.schema = schema;
         this.typeClass = typeClass;
-        this.constructors = constructors;
-        this.annotations = annotations;
-        this.methods = methods;
+        this.constructors = List.copyOf(constructors);
+        this.annotations = List.copyOf(annotations);
+        this.methods = List.copyOf(methods);
 
         var fieldMap = new TreeMap<String, EntityField<T, ?>>(String::compareTo);
         fields.forEach(it -> fieldMap.put(it.name(), it));

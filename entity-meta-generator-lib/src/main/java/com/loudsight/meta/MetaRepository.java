@@ -49,7 +49,7 @@ public class MetaRepository {
             } finally {
                 Thread.currentThread().setContextClassLoader(originalContextClassLoader);
             }
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException | RuntimeException e) {
             throw new IllegalStateException(e);
         }
     }

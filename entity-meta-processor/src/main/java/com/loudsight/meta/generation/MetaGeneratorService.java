@@ -4,6 +4,7 @@ import com.loudsight.meta.*;
 import com.loudsight.meta.annotation.Transient;
 import com.loudsight.meta.entity.*;
 import com.loudsight.useful.helper.ClassHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -11,7 +12,6 @@ import javax.lang.model.element.*;
 import javax.lang.model.type.*;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.SimpleTypeVisitor14;
 import javax.lang.model.util.Types;
 import java.util.Locale;
 
@@ -216,7 +216,7 @@ public class MetaGeneratorService {
                     // fields
                     var declaredFields = ElementFilter.fieldsIn(k.getEnclosedElements())
                             .stream()
-                            .filter(it -> !isCompanion(it) && !it.getModifiers().contains(Modifier.STATIC))
+                            .filter(it -> !it.getModifiers().contains(Modifier.STATIC))
                             .toList();
                     declaredFields.stream().sorted(Comparator.comparing(a -> a.getSimpleName().toString()))
                             .forEach(variableElement -> {
@@ -252,24 +252,6 @@ public class MetaGeneratorService {
                 methods.values().stream().toList()
         );
     }
-
-    SimpleTypeVisitor14<DeclaredType, Object> yy = new SimpleTypeVisitor14<>() {
-        @Override
-        public DeclaredType visitDeclared(DeclaredType t, Object p) {
-            return t;
-        }
-
-        @Override
-        public DeclaredType visitTypeVariable(TypeVariable t, Object p) {
-            return ((DeclaredType) t.asElement());
-        }
-
-        @Override
-        public DeclaredType visitWildcard(WildcardType t, Object p) {
-
-            return (DeclaredType) t.getExtendsBound();
-        }
-    };
 
     private EntityTypeInfo getEntityType(DeclaredType declaredType) {
         var typeElement = ((TypeElement) declaredType.asElement());
@@ -349,11 +331,6 @@ public class MetaGeneratorService {
             annotations.add(new EntityAnnotationInfo(name, annotationValues));
         }
         return annotations;
-    }
-
-    private Boolean isCompanion(VariableElement field) {
-        return field != null && field == null;
-        // return field.type.name.endsWith("\$Companion")
     }
 
     //
@@ -457,6 +434,9 @@ public class MetaGeneratorService {
         return retClass;
     }
 
+    @SuppressFBWarnings(value = "IMPROPER_UNICODE",
+            justification = "name is an ASCII Java type name produced by javac; Locale.ROOT "
+                    + "case folding has no locale-dependent or length-changing behaviour here")
     private String getTypeName(String name) {
         var typeName = name;
         var pos = typeName.indexOf("java.util.");
