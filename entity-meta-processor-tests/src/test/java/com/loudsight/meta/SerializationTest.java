@@ -1,6 +1,6 @@
 package com.loudsight.meta;
 
-import com.loudsight.meta.entity.*;
+import com.loudsight.meta.fixtures.processor.*;
 import com.loudsight.meta.serialization.EntityTransform;
 import org.junit.jupiter.api.Test;
 

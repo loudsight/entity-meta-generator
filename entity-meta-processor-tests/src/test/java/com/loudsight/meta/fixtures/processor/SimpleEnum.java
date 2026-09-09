@@ -1,4 +1,4 @@
-package com.loudsight.meta.entity;
+package com.loudsight.meta.fixtures.processor;
 
 import com.loudsight.meta.annotation.Introspect;
 

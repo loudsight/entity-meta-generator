@@ -2,7 +2,7 @@ package com.loudsight.meta.generation;
 
 import com.loudsight.meta.Meta;
 import com.loudsight.meta.MetaRepository;
-import com.loudsight.meta.entity.SimpleClass;
+import com.loudsight.meta.fixtures.processor.SimpleClass;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

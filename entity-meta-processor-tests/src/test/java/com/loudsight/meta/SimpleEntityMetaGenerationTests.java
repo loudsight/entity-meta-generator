@@ -1,8 +1,8 @@
 package com.loudsight.meta;
 
-import com.loudsight.meta.entity.SimpleClass;
-import com.loudsight.meta.entity.SimpleEnum;
-import com.loudsight.meta.entity.SimpleRecord;
+import com.loudsight.meta.fixtures.processor.SimpleClass;
+import com.loudsight.meta.fixtures.processor.SimpleEnum;
+import com.loudsight.meta.fixtures.processor.SimpleRecord;
 import com.loudsight.meta.entity.EntityField;
 import org.junit.jupiter.api.Test;
 
