@@ -3,6 +3,7 @@ package com.loudsight.meta.model.descriptors;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public final class ClassDescriptor {
 
@@ -65,7 +66,7 @@ public final class ClassDescriptor {
 
     @Override
     public String toString() {
-        return String.format("class %s%s: constructors: %s, attributes: %s, methods: %s",
+        return String.format(Locale.ROOT, "class %s%s: constructors: %s, attributes: %s, methods: %s",
                 this.packageName,
                 this.className,
                 this.constructors,

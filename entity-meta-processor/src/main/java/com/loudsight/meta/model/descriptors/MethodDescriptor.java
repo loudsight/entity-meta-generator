@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public final class MethodDescriptor {
@@ -80,7 +81,7 @@ public final class MethodDescriptor {
         } else {
             codeBlock.append("{}");
         }
-        return String.format("%s %s %s(%s)%s",
+        return String.format(Locale.ROOT, "%s %s %s(%s)%s",
                 String.join(" ", modifiers),
                 returnType,
                 name,

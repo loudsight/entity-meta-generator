@@ -62,7 +62,7 @@ public final class ConstructorDescriptor {
         } else {
             codeBlock.append("{}");
         }
-        return String.format("%s %s(%s)%s",
+        return String.format(Locale.ROOT, "%s %s(%s)%s",
                 String.join(" ", modifiers),
                 className,
                 argList,
