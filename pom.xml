@@ -48,6 +48,7 @@
         <module>entity-meta-generator-lib</module>
         <module>entity-meta-processor</module>
         <module>entity-meta-processor-tests</module>
+        <module>codemap-processor</module>
     </modules>
 
     <dependencies>

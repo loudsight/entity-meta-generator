@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.loudsight.meta</groupId>
+    <artifactId>entity-meta-generator</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>codemap-processor</artifactId>
+  <packaging>jar</packaging>
+
+  <description>
+    Annotation processor that extracts a lightweight class/method/field signature map for every
+    top-level type it sees during compilation, writing it to META-INF/codemap/signatures.json in
+    the module's compiled output. Opt-in per module via the parent's codemap-processing profile
+    (a `.codemap-enabled` marker file) - see that profile for why this is opt-in rather than
+    mirroring entity-meta-processing's opt-out polarity.
+
+    Carries a `.no-entity-meta` marker for the same reason entity-meta-processor carries one on
+    itself: without it, entity-meta-processing (opt-out, active by default) would put
+    entity-meta-processor on this module's own processor path. Since entity-meta-processor
+    depends on entity-meta-generator-lib, and any pilot module that opts into codemap-processing
+    depends on this module, that closes a real reactor cycle the moment such a pilot module is
+    entity-meta-generator-lib itself (or anything else entity-meta-processor depends on).
+  </description>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.google.auto.service</groupId>
+      <artifactId>auto-service</artifactId>
+      <scope>provided</scope>
+      <version>1.0.1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!--
+            combine.children="append" keeps error_prone_core, inherited from the parent, on the
+            processor path alongside auto-service - see entity-meta-processor/pom.xml for the same
+            pattern and why the default (replace) breaks the inherited -Xplugin:ErrorProne arg.
+          -->
+          <annotationProcessorPaths combine.children="append">
+            <path>
+              <groupId>com.google.auto.service</groupId>
+              <artifactId>auto-service</artifactId>
+              <version>1.0.1</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
