@@ -17,6 +17,7 @@
     <dependency>
       <groupId>com.loudsight.meta</groupId>
       <artifactId>entity-meta-processor</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
