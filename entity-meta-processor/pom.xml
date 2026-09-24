@@ -9,6 +9,8 @@
   </parent>
 
   <artifactId>entity-meta-processor</artifactId>
+  <name>Loudsight entity-meta-processor</name>
+  <description>Annotation processor that generates Meta and Schema classes for @Introspect-annotated types</description>
   <packaging>jar</packaging>
 
   <dependencies>

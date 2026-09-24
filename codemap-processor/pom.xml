@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>codemap-processor</artifactId>
+  <name>Loudsight codemap-processor</name>
   <packaging>jar</packaging>
 
   <description>
