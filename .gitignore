@@ -20,3 +20,6 @@
 /_project31/
 /unpublished/webapp/backendserver/src/main/resources/static
 /examples/ubs-vwap-calculator
+
+# flatten-maven-plugin output (the central-release profile writes one per module)
+.flattened-pom.xml

@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.loudsight.meta</groupId>
     <artifactId>entity-meta-generator</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>entity-meta-processor-tests</artifactId>
@@ -17,7 +17,7 @@
     <dependency>
       <groupId>com.loudsight.meta</groupId>
       <artifactId>entity-meta-processor</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
@@ -41,7 +41,7 @@
             <path>
               <groupId>com.loudsight.meta</groupId>
               <artifactId>entity-meta-processor</artifactId>
-              <version>0.0.1-SNAPSHOT</version>
+              <version>0.1.0-SNAPSHOT</version>
             </path>
           </annotationProcessorPaths>
         </configuration>
