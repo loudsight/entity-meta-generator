@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 /**
  * Unit test for {@link Schema#fingerprint()} - the content-derived shape identity that
  * persistence-server compares against a label's stored data to detect a schema mismatch.
- * See {@code notebook/issues/persistence-schema-registry-lost-on-restart.md}.
+ * See {@code kb/issues/persistence-schema-registry-lost-on-restart.md}.
  */
 class SchemaFingerprintTest {
 

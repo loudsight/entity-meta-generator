@@ -70,7 +70,7 @@ public record Schema(
      * produces a different one. persistence-server compares the fingerprint a connecting client
      * registers against the one the stored data was written under, to detect (and reject, not
      * migrate) a schema/data mismatch. See
-     * {@code notebook/issues/persistence-schema-registry-lost-on-restart.md}.
+     * {@code kb/issues/persistence-schema-registry-lost-on-restart.md}.
      * @return lowercase-hex SHA-256 of this schema's canonical shape
      */
     public String fingerprint() {
