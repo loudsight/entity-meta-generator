@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.loudsight</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.1.1-SNAPSHOT</version>
+        <relativePath />
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <groupId>com.loudsight.meta</groupId>
+    <version>0.1.1-SNAPSHOT</version>
+    <artifactId>entity-meta-generator</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Loudsight Entity Meta Generator</name>
+    <description>Annotation processors that generate Meta and Schema classes for @Introspect-annotated types</description>
+    <url>https://loudsight.com/</url>
+
+    <licenses>
+        <license>
+            <name>Loudsight Apache License 2.0 (Apache-2.0)</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Loudsight loudsight</name>
+            <email>spam@loudsight.com</email>
+            <organization>Loudsight</organization>
+            <organizationUrl>https://loudsight.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/loudsight/entity-meta-generator.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/loudsight/entity-meta-generator.git</developerConnection>
+        <url>https://github.com/loudsight/entity-meta-generator</url>
+    </scm>
+
+    <modules>
+        <module>entity-meta-generator-lib</module>
+        <module>entity-meta-processor</module>
+        <module>entity-meta-processor-tests</module>
+        <module>codemap-processor</module>
+    </modules>
+</project>
