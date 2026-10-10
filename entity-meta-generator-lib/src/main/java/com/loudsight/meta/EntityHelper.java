@@ -1,0 +1,118 @@
+package com.loudsight.meta;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.function.Function;
+
+import com.loudsight.collection.MultiKeyMap;
+import com.loudsight.useful.helper.ClassHelper;
+import com.loudsight.useful.helper.logging.LoggingHelper;
+
+/**
+ * Helper class for entity conversion and manipulation.
+ */
+public final class EntityHelper {
+
+    private EntityHelper() {
+    }
+
+    //    companion object {
+    private static final LoggingHelper logger = LoggingHelper.wrap(EntityHelper.class);
+
+    private static final List<Class<?>> primitives = List.of(
+            boolean.class,
+            Boolean.class,
+            int.class,
+            Integer.class,
+            double.class,
+            Double.class,
+            long.class,
+            Long.class,
+            String.class,
+            LocalDateTime.class
+    );
+
+    @FunctionalInterface
+    public interface Converter<F, T> extends Function<F, T> {
+
+    }
+
+    private static final MultiKeyMap<Class<?>, Class<?>, Converter<Object, ?>> converters = new MultiKeyMap<>();
+
+    static {
+        converters.put(Integer.class, Long.class, it -> Long.valueOf((Integer)it));
+    }
+
+    /**
+     * Checks if a class is a primitive type.
+     * @param entity the class to check
+     * @return true if the class is a primitive type
+     */
+    public static boolean isPrimitive(Class<?> entity) {
+        return primitives.contains(entity);
+    }
+
+    /**
+     * Checks if a type name is a primitive type.
+     * <p>
+     * Compares by simple name (stripping any package prefix) rather than requiring an exact
+     * match against Class.getName(): generated SchemaField.typeName() values are not
+     * consistently fully-qualified ("java.lang.Long") or short ("Long") - the codegen source is
+     * javax.lang.model's TypeMirror.toString(), which varies by call site - so a strict
+     * getName() comparison silently never matches for whichever form isn't fully-qualified.
+     * @param typeName the type name to check
+     * @return true if the type name is a primitive type
+     */
+    public static boolean isPrimitive(String typeName) {
+        if (typeName == null) {
+            return false;
+        }
+        String simpleTypeName = typeName.contains(".") ? typeName.substring(typeName.lastIndexOf('.') + 1) : typeName;
+        return primitives.stream().anyMatch(c -> c.getSimpleName().equals(simpleTypeName));
+    }
+
+    /**
+     * Converts a value to the target class.
+     * @param value the value to convert
+     * @param targetClass the target class
+     * @return the converted value
+     */
+    public static <T> T convert(Object value, Class<T> targetClass) {
+
+        var result = value;
+
+        try {
+            Class<?> sourceClass = value.getClass();
+
+            if (targetClass.isAssignableFrom(sourceClass)) {
+                return ClassHelper.uncheckedCast(result);
+            }
+
+            if (Enum.class.isAssignableFrom(targetClass)) {
+                    result = targetClass.getMethod("valueOf", String.class).invoke(null, value.toString());
+                    return ClassHelper.uncheckedCast(result);
+            }
+
+            Converter<Object, T> converter = ClassHelper.uncheckedCast(converters.get(sourceClass, targetClass));
+
+            if (converter != null) {
+                return converter.apply(value);
+            }
+//                if (Enum.class.java.isAssignableFrom(targetClass)) {
+//                    result = targetClass.getMethod("valueOf", String.class.java).invoke(null, value.toString())
+//                    return uncheckedCast(result)
+//                }
+//                if (Int.class.javaPrimitiveType!!.isAssignableFrom(targetClass)) {
+//                    result = Integer.valueOf(value.toString())
+//                    return uncheckedCast(result)
+//                }
+//                if (Long.class.javaPrimitiveType!!.isAssignableFrom(targetClass)) {
+//                    result = java.lang.Long.valueOf(value.toString())
+//                    return uncheckedCast(result);
+//                }
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            logger.logError("Unexpected error", e);
+        }
+        return ClassHelper.uncheckedCast(result);
+    }
+}

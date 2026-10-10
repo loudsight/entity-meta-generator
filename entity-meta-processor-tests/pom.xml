@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.loudsight.meta</groupId>
+    <artifactId>entity-meta-generator</artifactId>
+    <version>0.1.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>entity-meta-processor-tests</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Loudsight entity-meta-processor-tests</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.loudsight.meta</groupId>
+      <artifactId>entity-meta-processor</artifactId>
+      <version>0.1.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <!--
+          Unlike its siblings this module genuinely needs entity-meta-processor on the processor
+          path - exercising the processor is the point of it - and it cannot inherit that from the
+          parent's entity-meta-processing profile, because .no-entity-meta here keeps the profile
+          off so the rest of this tree can bootstrap.
+
+          It must append rather than override. combine.self="override" on <configuration> discarded
+          the inherited compilerArgs and processor path together; keeping the -Xplugin argument
+          while dropping error_prone_core would fail the compile with "plug-in not found".
+        -->
+        <configuration>
+          <annotationProcessorPaths combine.children="append">
+            <path>
+              <groupId>com.loudsight.meta</groupId>
+              <artifactId>entity-meta-processor</artifactId>
+              <version>${project.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/SerializationTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

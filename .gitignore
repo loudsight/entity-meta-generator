@@ -1,0 +1,25 @@
+/.idea
+/.vscode/
+/**/*.iml
+/**/target
+/**/build
+/h2db
+/venv
+/**/node_modules
+/**/dist
+/masters
+/.planning
+/.automationj
+/.ipynb_checkpoints
+/pom.xml
+/**/.settings
+/**/.project
+/**/.metadata
+/scratch
+/**/*.egg-info
+/_project31/
+/unpublished/webapp/backendserver/src/main/resources/static
+/examples/ubs-vwap-calculator
+
+# flatten-maven-plugin output (the central-release profile writes one per module)
+.flattened-pom.xml

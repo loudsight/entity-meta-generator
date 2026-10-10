@@ -1,0 +1,115 @@
+package com.loudsight.meta;
+
+import com.loudsight.meta.entity.EntityAnnotation;
+import com.loudsight.meta.entity.EntityConstructor;
+import com.loudsight.meta.entity.EntityField;
+import com.loudsight.meta.entity.EntityMethod;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public abstract class DefaultMeta<T> implements Meta<T> {
+
+    private final Schema schema;
+    private final Class<T> typeClass;
+    private final List<EntityConstructor> constructors;
+    private final List<EntityAnnotation> annotations;
+    private final List<EntityMethod<T, ?>> methods;
+
+    private final Map<String, EntityField<T, ?>> fieldMap;
+
+
+    public DefaultMeta(
+            Schema schema,
+            Class<T> typeClass,
+            List<EntityField<T, ?>> fields,
+            List<EntityConstructor> constructors,
+            List<EntityAnnotation> annotations,
+            List<EntityMethod<T, ?>> methods
+    ) {
+        this.schema = schema;
+        this.typeClass = typeClass;
+        this.constructors = List.copyOf(constructors);
+        this.annotations = List.copyOf(annotations);
+        this.methods = List.copyOf(methods);
+
+        var fieldMap = new TreeMap<String, EntityField<T, ?>>(String::compareTo);
+        fields.forEach(it -> fieldMap.put(it.name(), it));
+
+        this.fieldMap = Collections.unmodifiableMap(fieldMap);
+    }
+
+    @Override
+    public Schema getSchema() {
+        return schema;
+    }
+
+    //    private val methodMap: Map<String, EntityMethod<T, *>>
+//        get() {
+//            val sortedEntityMethods: List<EntityMethod<T, *>> = ArrayList(entityMethods)
+//                .sortedBy { obj: EntityMethod<T, *> -> obj.name }
+//
+//            return methods.associateBy({ obj: EntityMethod<T, *> -> obj.name }, { it })
+//        }
+
+    @Override
+    public Class<T> getTypeClass() {
+        return typeClass;
+    }
+
+    @Override
+    public Collection<EntityField<T, ?>> getFields() {
+        return fieldMap.values();
+    }
+
+    @Override
+    public List<EntityConstructor> getConstructors() {
+        return constructors;
+    }
+
+    @Override
+    public List<EntityAnnotation> getAnnotations() {
+        return annotations;
+    }
+
+    @Override
+    public T newInstance() {
+        return newInstance(Collections.emptyMap());
+    }
+
+    @Override
+    public final Map<String, EntityField<T, ?>> getFieldAsMap() {
+        return fieldMap;
+    }
+
+    @Override
+    public final EntityField<T, ?> getFieldByName(String name) {
+        return fieldMap.get(name);
+    }
+    // TODO: Implement getMethod when needed
+
+    @Override
+    public Map<String, Object> toMap(T entity) {
+        return fieldMap
+                .entrySet()
+                .stream()
+                .filter(it -> Objects.nonNull(it.getValue().get(entity)))
+            .collect(
+                    Collectors.toMap(
+                            Map.Entry::getKey,
+                            it -> it.getValue().get(entity)
+                    )
+            );
+    }
+
+    @Override
+    public List<EntityMethod<T, ?>> getMethods() {
+        return methods;
+    }
+
+//    fun <T : Object> getRelationships(meta: Meta<T>, entity: T): Map<String?, Object?> {
+//        TODO("Not yet implemented")
+//    }
+
+
+}

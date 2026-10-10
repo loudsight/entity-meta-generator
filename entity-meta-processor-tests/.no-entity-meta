@@ -1,0 +1,4 @@
+Opts this module out of the entity-meta-processing profile in parent/pom.xml.
+
+It declares its own annotationProcessorPaths and its own dependency on entity-meta-processor, since
+exercising the processor is the point of the module. Inheriting the profile would duplicate both.
