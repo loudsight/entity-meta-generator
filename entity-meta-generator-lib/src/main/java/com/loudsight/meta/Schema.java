@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 /**
  * Class-free type metadata for Schema.
- * Contains only String/boolean/List data, no Class<?> references.
+ * Contains only String/boolean/List data, no {@code Class<?>} references.
  * Used by persistence-server to understand type shapes without loading business entity classes.
  */
 public record Schema(

@@ -2,7 +2,7 @@ package com.loudsight.meta.entity;
 
 /**
  * Class-free field metadata for Schema.
- * Contains only String/boolean data, no Class<?> references.
+ * Contains only String/boolean data, no {@code Class<?>} references.
  * Used by persistence-server to understand field shapes without loading business entity classes.
  */
 public record SchemaField(

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * Generates <X>Schema.java classes from MetaInfo.
- * Emits class-free Schema objects containing only String/boolean/List data, no Class<?> references.
+ * Emits class-free Schema objects containing only String/boolean/List data, no {@code Class<?>} references.
  * Sibling to MetaSourceCodeGenerator, consuming the same MetaInfo model.
  */
 public class SchemaSourceCodeGenerator {
