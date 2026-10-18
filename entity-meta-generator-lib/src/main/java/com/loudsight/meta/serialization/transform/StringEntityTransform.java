@@ -1,6 +1,6 @@
 package com.loudsight.meta.serialization.transform;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,8 +31,10 @@ public final class StringEntityTransform extends EntityTransform<String> {
     @Override
     public void serializeEntity(String entity, List<Byte> bytes) {
         bytes.add(EntityType.STRING.getCode());
-        writeInt(entity.length(), bytes);
-        for (var b : entity.getBytes(Charset.defaultCharset())) {
+        // The length counts the bytes that follow (UTF-8), not characters, so the reader stays aligned.
+        var utf8 = entity.getBytes(StandardCharsets.UTF_8);
+        writeInt(utf8.length, bytes);
+        for (var b : utf8) {
             bytes.add(b);
         }
     }

@@ -2,9 +2,8 @@ package com.loudsight.meta.serialization;
 
 import com.loudsight.meta.serialization.transform.StringEntityTransform;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -76,9 +75,13 @@ public abstract class EntityTransform<T> {
      * @param bytes the byte list
      */
     protected void writeStr(String str, List<Byte> bytes) {
-        var length = str.length();
-        writeInt(length, bytes);
-        Arrays.stream(str.split("")).forEach(e -> { bytes.add((byte)e.charAt(0)); });
+        // The length is the number of bytes that follow, not characters: they differ for anything outside ASCII,
+        // and a reader that trusts the length would otherwise stop short and read the rest as the next field.
+        var utf8 = str.getBytes(StandardCharsets.UTF_8);
+        writeInt(utf8.length, bytes);
+        for (var b : utf8) {
+            bytes.add(b);
+        }
     }
 
     /**
@@ -164,7 +167,7 @@ public abstract class EntityTransform<T> {
                 primitiveBytes[i] = outBytes.get(i);
             }
 
-            return new String(primitiveBytes, Charset.defaultCharset());
+            return new String(primitiveBytes, StandardCharsets.UTF_8);
         }
         /**
          * Serializes an entity to a byte array.
