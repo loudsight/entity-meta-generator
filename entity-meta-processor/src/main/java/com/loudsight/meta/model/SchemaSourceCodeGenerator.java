@@ -41,27 +41,67 @@ public class SchemaSourceCodeGenerator {
     }
 
     /**
+     * The {@link Schema} the generated {@code <X>Schema} class holds, built here at compile time
+     * from the same values the generated source is written from (see {@link #addSchemaField()}),
+     * so its {@link Schema#fingerprint()} equals the one the generated class yields at runtime.
+     * @return the schema of the introspected type
+     */
+    public Schema toSchema() {
+        return new Schema(
+                metaInfo.typeName(),
+                metaInfo.getPackageName(),
+                metaInfo.simpleTypeName(),
+                metaInfo.isEnum(),
+                metaInfo.isRecord(),
+                schemaFields(),
+                typeHierarchyNames());
+    }
+
+    private List<SchemaField> schemaFields() {
+        return metaInfo.fields().stream()
+                .map(SchemaSourceCodeGenerator::toSchemaField)
+                .collect(Collectors.toList());
+    }
+
+    private static SchemaField toSchemaField(EntityVariableInfo field) {
+        boolean isId = field.getAnnotations().stream()
+                .anyMatch(it -> Id.class.getName().equals(it.getName()));
+        boolean isTransient = field.getAnnotations().stream()
+                .anyMatch(it -> Transient.class.getName().equals(it.getName()));
+        return new SchemaField(
+                field.getName(),
+                field.getType().getTypeName(),
+                field.isEnum(),
+                field.isCollection(),
+                isId,
+                isTransient);
+    }
+
+    private List<String> typeHierarchyNames() {
+        return metaInfo.typeHierarchy().stream()
+                .map(EntityTypeInfo::getTypeName)
+                .filter(it -> it.contains(".") &&
+                        !(it.startsWith("java") || it.startsWith("kotlin")))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Adds a static field holding the Schema instance.
      */
     private void addSchemaField() {
         // Build the list of SchemaField literals
         CodeBlock.Builder fieldsBlock = CodeBlock.builder();
-        List<EntityVariableInfo> fields = metaInfo.fields();
+        List<SchemaField> fields = schemaFields();
         for (int i = 0; i < fields.size(); i++) {
-            EntityVariableInfo field = fields.get(i);
-            boolean isId = field.getAnnotations().stream()
-                    .anyMatch(it -> Id.class.getName().equals(it.getName()));
-            boolean isTransient = field.getAnnotations().stream()
-                    .anyMatch(it -> Transient.class.getName().equals(it.getName()));
-
+            SchemaField field = fields.get(i);
             fieldsBlock.add("new $T($S, $S, $L, $L, $L, $L)",
                     SchemaField.class,
-                    field.getName(),
-                    field.getType().getTypeName(),
+                    field.name(),
+                    field.typeName(),
                     field.isEnum(),
                     field.isCollection(),
-                    isId,
-                    isTransient);
+                    field.isId(),
+                    field.isTransient());
             if (i < fields.size() - 1) {
                 fieldsBlock.add(",\n        ");
             }
@@ -69,13 +109,9 @@ public class SchemaSourceCodeGenerator {
 
         // Build the type hierarchy list
         CodeBlock.Builder hierarchyBlock = CodeBlock.builder();
-        List<EntityTypeInfo> typeHierarchy = metaInfo.typeHierarchy().stream()
-                .filter(it -> it.getTypeName().contains(".") && 
-                        !(it.getTypeName().startsWith("java") || it.getTypeName().startsWith("kotlin")))
-                .collect(Collectors.toList());
-        
+        List<String> typeHierarchy = typeHierarchyNames();
         for (int i = 0; i < typeHierarchy.size(); i++) {
-            hierarchyBlock.add("$S", typeHierarchy.get(i).getTypeName());
+            hierarchyBlock.add("$S", typeHierarchy.get(i));
             if (i < typeHierarchy.size() - 1) {
                 hierarchyBlock.add(",\n        ");
             }
