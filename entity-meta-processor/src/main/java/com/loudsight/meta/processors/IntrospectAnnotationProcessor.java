@@ -5,6 +5,8 @@ import com.loudsight.meta.writter.MetaClassWriter;
 import com.loudsight.meta.writter.SchemaClassWriter;
 import com.loudsight.meta.EntityMetaProcessor;
 import com.loudsight.meta.MetaInfo;
+import com.loudsight.meta.Schema;
+import com.loudsight.meta.entity.SchemaField;
 import com.loudsight.meta.annotation.Introspect;
 import com.loudsight.meta.exceptions.BadAnnotationUsageException;
 import com.loudsight.meta.model.SchemaSourceCodeGenerator;
@@ -27,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @SupportedAnnotationTypes("com.loudsight.meta.annotation.Introspect")
 @SupportedSourceVersion(SourceVersion.RELEASE_25)
@@ -36,14 +39,16 @@ public final class IntrospectAnnotationProcessor
     private static final String ANNOTATION_NAME = Introspect.class.getSimpleName();
     private static final String INDEX_FILE = "META-INF/introspect-types.index";
     /**
-     * One line per introspected type: {@code <fully-qualified type name> TAB <Schema#fingerprint()>},
-     * sorted by type name, UTF-8, '\n'-terminated. The fingerprint is the value the generated
+     * One line per introspected type:
+     * {@code <fully-qualified type name> TAB <Schema#fingerprint()> TAB <field names>}, sorted by
+     * type name, UTF-8, '\n'-terminated. The fingerprint is the value the generated
      * {@code <X>Schema} yields at runtime, so a build can be compared with stored fingerprints
-     * before it is deployed.
+     * before it is deployed; the field names (see {@link #fieldNames}) let it be compared with
+     * stored property keys too.
      */
     static final String SCHEMAS_FILE = "META-INF/introspect-schemas.tsv";
     private final Set<String> introspectedTypes = new HashSet<>();
-    private final Map<String, String> fingerprintByType = new TreeMap<>();
+    private final Map<String, Schema> schemaByType = new TreeMap<>();
 
     public IntrospectAnnotationProcessor() {
         super(Introspect.class);
@@ -91,8 +96,7 @@ public final class IntrospectAnnotationProcessor
             writer.generateMetaClass(model);
             SchemaClassWriter schemaWriter = new SchemaClassWriter(this.processingEnv.getFiler());
             schemaWriter.generateSchemaClass(model);
-            fingerprintByType.put(model.typeName(),
-                    new SchemaSourceCodeGenerator(model).toSchema().fingerprint());
+            schemaByType.put(model.typeName(), new SchemaSourceCodeGenerator(model).toSchema());
             EntityMetaProcessor entityMetaProcessor = new EntityMetaProcessor(
                     processingEnv.getTypeUtils(),
                     processingEnv.getElementUtils()
@@ -144,7 +148,7 @@ public final class IntrospectAnnotationProcessor
                     SCHEMAS_FILE
             );
             try (Writer writer = resource.openWriter()) {
-                writer.write(formatSchemaFingerprints(fingerprintByType));
+                writer.write(formatSchemaFingerprints(schemaByType));
             }
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(
@@ -154,10 +158,24 @@ public final class IntrospectAnnotationProcessor
         }
     }
 
-    static String formatSchemaFingerprints(Map<String, String> fingerprintByType) {
+    static String formatSchemaFingerprints(Map<String, Schema> schemaByType) {
         var out = new StringBuilder();
-        new TreeMap<>(fingerprintByType).forEach((typeName, fingerprint) ->
-                out.append(typeName).append('\t').append(fingerprint).append('\n'));
+        new TreeMap<>(schemaByType).forEach((typeName, schema) ->
+                out.append(typeName).append('\t').append(schema.fingerprint())
+                        .append('\t').append(fieldNames(schema)).append('\n'));
         return out.toString();
+    }
+
+    /**
+     * The third column: the schema's field names ({@link SchemaField#name()} of every
+     * {@link Schema#fields()} entry, the names a persistence server logs as a label's deployed
+     * fields), sorted, comma-joined, empty for a type with no fields. A field name is a Java
+     * identifier, so it never contains a comma or a tab.
+     */
+    static String fieldNames(Schema schema) {
+        return schema.fields().stream()
+                .map(SchemaField::name)
+                .sorted()
+                .collect(Collectors.joining(","));
     }
 }
