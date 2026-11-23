@@ -146,6 +146,27 @@ After compiling your code, the annotation processor generates a class (e.g., `Pe
 
 This basic example is not exhaustive, but, demonstrates simple uses of each of the methods defined in the `Meta<T>` interface to access metadata and perform various operations on the generated `PersonMeta` class.
 
+## Generated resource files
+
+Besides the generated classes, the processor writes two resources into the compiled classes:
+
+- `META-INF/introspect-types.index`: the fully-qualified name of every `@Introspect` type, one per line.
+- `META-INF/introspect-schemas.tsv`: one line per `@Introspect` type, sorted by type name, UTF-8,
+  every line terminated by `\n`, with three tab-separated columns:
+  1. the fully-qualified type name;
+  2. the type's `Schema.fingerprint()` (64 hex characters), the same value the generated `<X>Schema`
+     yields at runtime;
+  3. the type's field names: the `name()` of every `Schema.fields()` entry, sorted (Java `String` order)
+     and joined with `,`, with no spaces; empty (the line ends with a tab) for a type with no fields.
+     Field names are Java identifiers, so they never contain a comma or a tab.
+
+For example, a `Person` with fields `name` and `age` gives
+`com.example.Person<TAB><fingerprint><TAB>age,name`.
+
+The file lets a build compare its schemas with ones stored elsewhere (by fingerprint, and by field
+names against stored property keys) before it is deployed. Readers split each line on tab and the
+third column on comma.
+
 
 ## Conclusion
 
