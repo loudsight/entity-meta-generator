@@ -7,6 +7,7 @@ import com.loudsight.meta.EntityMetaProcessor;
 import com.loudsight.meta.MetaInfo;
 import com.loudsight.meta.annotation.Introspect;
 import com.loudsight.meta.exceptions.BadAnnotationUsageException;
+import com.loudsight.meta.model.SchemaSourceCodeGenerator;
 
 import com.google.auto.service.AutoService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -21,8 +22,11 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.TreeMap;
 
 @SupportedAnnotationTypes("com.loudsight.meta.annotation.Introspect")
 @SupportedSourceVersion(SourceVersion.RELEASE_25)
@@ -31,7 +35,15 @@ public final class IntrospectAnnotationProcessor
         extends AbstractAnnotationProcessor<Introspect, MetaInfo> {
     private static final String ANNOTATION_NAME = Introspect.class.getSimpleName();
     private static final String INDEX_FILE = "META-INF/introspect-types.index";
+    /**
+     * One line per introspected type: {@code <fully-qualified type name> TAB <Schema#fingerprint()>},
+     * sorted by type name, UTF-8, '\n'-terminated. The fingerprint is the value the generated
+     * {@code <X>Schema} yields at runtime, so a build can be compared with stored fingerprints
+     * before it is deployed.
+     */
+    static final String SCHEMAS_FILE = "META-INF/introspect-schemas.tsv";
     private final Set<String> introspectedTypes = new HashSet<>();
+    private final Map<String, String> fingerprintByType = new TreeMap<>();
 
     public IntrospectAnnotationProcessor() {
         super(Introspect.class);
@@ -79,6 +91,8 @@ public final class IntrospectAnnotationProcessor
             writer.generateMetaClass(model);
             SchemaClassWriter schemaWriter = new SchemaClassWriter(this.processingEnv.getFiler());
             schemaWriter.generateSchemaClass(model);
+            fingerprintByType.put(model.typeName(),
+                    new SchemaSourceCodeGenerator(model).toSchema().fingerprint());
             EntityMetaProcessor entityMetaProcessor = new EntityMetaProcessor(
                     processingEnv.getTypeUtils(),
                     processingEnv.getElementUtils()
@@ -113,11 +127,37 @@ public final class IntrospectAnnotationProcessor
                         "Failed to write introspect types index: " + e.getMessage()
                 );
             }
+            writeSchemaFingerprints();
         }
 
         // Never claim @Introspect: other processors (and future rounds) must still see it.
         // AbstractAnnotationProcessor.process() already returns false unconditionally, so this
         // is the same value it always produced, just stated where the contract is visible.
         return false;
+    }
+
+    private void writeSchemaFingerprints() {
+        try {
+            var resource = processingEnv.getFiler().createResource(
+                    javax.tools.StandardLocation.CLASS_OUTPUT,
+                    "",
+                    SCHEMAS_FILE
+            );
+            try (Writer writer = resource.openWriter()) {
+                writer.write(formatSchemaFingerprints(fingerprintByType));
+            }
+        } catch (IOException e) {
+            processingEnv.getMessager().printMessage(
+                    javax.tools.Diagnostic.Kind.ERROR,
+                    "Failed to write introspect schema fingerprints: " + e.getMessage()
+            );
+        }
+    }
+
+    static String formatSchemaFingerprints(Map<String, String> fingerprintByType) {
+        var out = new StringBuilder();
+        new TreeMap<>(fingerprintByType).forEach((typeName, fingerprint) ->
+                out.append(typeName).append('\t').append(fingerprint).append('\n'));
+        return out.toString();
     }
 }
